@@ -30,23 +30,23 @@ With sane UEFI settings, I can begin installing Debian.
 
 1. After rebooting, I selected `Graphical install`.
 2. In the graphical installer:
-  1. I selected `English` as my language.
-  2. I selected `United States` as my location (I prefer the American English locale).
-  3. I selected the `American English` keyboard.
-  4. I selected `debian` as my hostname.
-  5. I left the domain name blank.
-  6. I left the root password blank.
-  7. I selected `void` as my full name and username, because `admin` was not allowed.
-  8. I used my password manager to generate a strong user password.
-  9. I selected the `Eastern` time zone.
-  10. I selected `Guided - use entire disk` to wipe the original Windows install.
-  11. I selected my 256 GB internal NVMe as the target.
-  12. I selected `All files in one partition (recommended for new users)` for partitioning.
-  13. I confirmed partitioning.
-  14. I selected `Poland` and then `deb.debian.org` as the Debian archive mirror.
-  15. I left the HTTP proxy blank.
-  16. I selected `Yes` when asked to participate in the package usage survey because Debian is awesome.
-  17. On the software selection screen, I only checked `SSH server` and `standard system utilities`.
+    1. I selected `English` as my language.
+    2. I selected `United States` as my location (I prefer the American English locale).
+    3. I selected the `American English` keyboard.
+    4. I selected `debian` as my hostname.
+    5. I left the domain name blank.
+    6. I left the root password blank.
+    7. I selected `void` as my full name and username, because `admin` was not allowed.
+    8. I used my password manager to generate a strong user password.
+    9. I selected the `Eastern` time zone.
+    10. I selected `Guided - use entire disk` to wipe the original Windows install.
+    11. I selected my 256 GB internal NVMe as the target.
+    12. I selected `All files in one partition (recommended for new users)` for partitioning.
+    13. I confirmed partitioning.
+    14. I selected `Poland` and then `deb.debian.org` as the Debian archive mirror.
+    15. I left the HTTP proxy blank.
+    16. I selected `Yes` when asked to participate in the package usage survey because Debian is awesome.
+    17. On the software selection screen, I only checked `SSH server` and `standard system utilities`.
 3. After the OS was installed, I removed the USB stick and pressed `Continue` to reboot.
 
 ## First boot
@@ -62,21 +62,21 @@ Now that Debian is installed, I can log in via TTY.
 Now I can set up access from my MacBook so the server can actually be headless.
 
 1. I SSHed into the server from my MacBook using:
-  ```sh
-  ssh void@192.168.1.79
-  ```
+    ```sh
+    ssh void@192.168.1.79
+    ```
 2. When asked whether I wanted to continue connecting, I entered `yes`.
 3. I entered my password, this time copying it from my password manager, so it was easy.
 4. I installed `htop` to preview the hardware: `sudo apt install htop`.
 5. I used `ssh-keygen -t ed25519 -a 100 -C "macbook-to-debian"` to generate an SSH key. I used my password manager to generate a passphrase.
 6. I ran `cat ~/.ssh/id_ed25519.pub` on my MacBook to view my public key.
 7. I SSHed into my server via `ssh void@192.168.1.79` and ran the following on the Debian server, pasting my public key via `nano` (I should have just used `ssh-copy-id`, lol):
-  ```sh
-  mkdir -p ~/.ssh
-  chmod 700 ~/.ssh
-  nano ~/.ssh/authorized_keys
-  chmod 600 ~/.ssh/authorized_keys
-  ```
+    ```sh
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    nano ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
+    ```
 8. I ran `ssh -i ~/.ssh/id_ed25519 void@192.168.1.79` to test whether the key worked. I was asked for a passphrase, and then the SSH connection worked and I logged in.
 9. On macOS, I ran `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` to add the passphrase to the macOS Keychain so I do not have to enter it again.
 
@@ -97,11 +97,11 @@ I need to set a DHCP reservation for the server.
 2. Then I retrieved the current IP address with `ip addr show eno1`. It was `192.168.1.79`.
 3. Finally, I retrieved the router IP address with `ip route`. It was `192.168.1.1`.
 4. I logged into its web interface via Safari. It is a Nokia G-241W-A router. For some reason, pretty much all fields were locked, so I had to paste this into Safari's console:
-  ```js
-  for (const element of document.querySelectorAll('input, button, select, textarea')) {
-    element.disabled = false;
-  }
-  ```
+    ```js
+    for (const element of document.querySelectorAll('input, button, select, textarea')) {
+        element.disabled = false;
+    }
+    ```
 5. I opened `Network` -> `LAN` and added them under `Static DHCP Entry`. I used `192.168.1.67` as the reserved IP.
 6. I ran `sudo reboot` on the Debian server.
 7. I SSHed via `ssh void@192.168.1.67` to confirm that it worked.
@@ -114,10 +114,10 @@ There are a couple of small things worth changing.
 2. While I still had a monitor connected, I noticed there was a GRUB screen before the OS started. I ran `sudo nano /etc/default/grub` to open the GRUB config, changed `GRUB_TIMEOUT` from `5` to `0`, then ran `sudo update-grub`.
 3. To set up automatic updates, I ran `sudo apt install unattended-upgrades` and then `sudo dpkg-reconfigure unattended-upgrades`.
 4. To set up a firewall, I ran:
-  ```sh
-  sudo apt install ufw
-  sudo ufw default deny incoming
-  sudo ufw default allow outgoing
-  sudo ufw allow ssh
-  sudo ufw enable
-  ```
+    ```sh
+    sudo apt install ufw
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+    sudo ufw allow ssh
+    sudo ufw enable
+    ```
