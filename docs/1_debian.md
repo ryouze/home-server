@@ -117,7 +117,7 @@ There are a couple of small things worth changing.
     sudo apt install ufw
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
-    sudo ufw allow ssh
+    sudo ufw allow OpenSSH
     sudo ufw enable
     ```
 5. To set up Avahi so I can access the server at `debian.local` (e.g., `ssh void@debian.local`), I ran:
