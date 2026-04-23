@@ -21,10 +21,11 @@ I plan to add an internal SATA SSD in the future.
 
 Headless Debian (accessed via SSH), running:
 
-- Jellyfin
-- qBittorrent
-- Pi-hole
-- Samba
+- Caddy (reverse proxy)
+- Jellyfin (media server)
+- qBittorrent (torrenting client)
+- Pi-hole (DNS filtering)
+- Samba (file sharing)
 
 ## Contributing
 
