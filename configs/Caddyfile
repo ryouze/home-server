@@ -1,0 +1,36 @@
+# Listen on HTTP port 80
+:80 {
+    # Enable access logs to stdout so `docker compose logs -f caddy` shows requests
+    log {
+        output stdout
+        format console
+    }
+
+    # Keep these handlers in exactly this order
+    route {
+        # Redirect `http://debian.local/` to `http://debian.local/jellyfin/`
+        redir / /jellyfin/ 308
+
+        # Normalize `/jellyfin` to `/jellyfin/`
+        redir /jellyfin /jellyfin/ 308
+
+        # Send requests under `/jellyfin/` to Jellyfin on port 8096
+        # Preserve the `/jellyfin` prefix so it matches Jellyfin's Base URL setting
+        reverse_proxy /jellyfin/* jellyfin:8096
+
+        # Normalize `/qbt` to `/qbt/`
+        redir /qbt /qbt/ 308
+
+        # Match requests under `/qbt/` and strip the `/qbt` prefix before proxying
+        handle_path /qbt/* {
+            # Send those requests to qBittorrent on port 8080
+            reverse_proxy qbittorrent:8080 {
+                # Set the upstream `Host` header to the backend address
+                header_up Host {upstream_hostport}
+            }
+        }
+
+        # Return 404 for everything else
+        respond 404
+    }
+}
