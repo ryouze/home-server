@@ -1,12 +1,15 @@
+# Global settings
+{
+    # Disable the admin API (this also disables `caddy reload`)
+    admin off
+
+    # Disable automatic HTTPS
+    auto_https off
+}
+
 # Listen on HTTP port 80
 :80 {
-    # Enable access logs to stdout so `docker compose logs -f caddy` shows requests
-    log {
-        output stdout
-        format console
-    }
-
-    # Keep these handlers in exactly this order
+    # Process logic in this exact order
     route {
         # Redirect `http://debian.local/` to `http://debian.local/jellyfin/`
         redir / /jellyfin/ 308
