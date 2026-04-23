@@ -125,3 +125,9 @@ There are a couple of small things worth changing.
     sudo apt install avahi-daemon
     sudo ufw allow 5353/udp
     ```
+6. To avoid having to enter my `sudo` password every 5 minutes, I ran `sudo visudo -f /etc/sudoers.d/void` and entered the following:
+    ```
+    Defaults:void timestamp_type=tty
+    Defaults:void timestamp_timeout=-1
+    ```
+    Then I ran `sudo chmod 0440 /etc/sudoers.d/void` and `sudo visudo -c`.

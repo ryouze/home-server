@@ -54,26 +54,7 @@ I need to be able to access the files using Finder on my MacBook.
 
 1. I installed SAMBA with `sudo apt install samba`.
 2. I backed up `/etc/samba/smb.conf` via `sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bak`.
-3. I opened it via `sudo nano /etc/samba/smb.conf` and replaced it with the following:
-    ```
-    [global]
-        server role = standalone server
-        log file = /var/log/samba/log.%m
-        max log size = 1000
-        logging = file
-        panic action = /usr/share/samba/panic-action %d
-        load printers = no
-        printcap name = /dev/null
-        disable spoolss = yes
-
-    [data]
-        comment = Storage
-        path = /srv/storage/data
-        read only = no
-        valid users = void
-        create mask = 0600
-        directory mask = 0700
-    ```
+3. I opened it via `sudo nano /etc/samba/smb.conf` and replaced it with `configs/smb.conf`.
 4. I checked the config for mistakes using `sudo testparm -s`.
 5. I added a new password from my password manager (will be required in Finder on macOS): `sudo smbpasswd -a void`.
 6. I started the SAMBA service via `sudo systemctl enable --now smbd` and restarted it via `sudo systemctl restart smbd`.
