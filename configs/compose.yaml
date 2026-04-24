@@ -2,6 +2,28 @@
 
 services:
 
+  caddy:
+    image: "caddy:2-alpine"
+    container_name: "caddy"
+    ports:
+      - "80:80"
+    volumes:
+      - "./caddy/conf:/etc/caddy"
+      - "./caddy/data:/data"
+      - "./caddy/config:/config"
+    restart: "unless-stopped"
+
+  homarr:
+    image: "ghcr.io/homarr-labs/homarr:latest"
+    container_name: "homarr"
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      SECRET_ENCRYPTION_KEY: "${SECRET_ENCRYPTION_KEY}"
+    volumes:
+      - "./homarr/appdata:/appdata"
+    restart: "unless-stopped"
+
   jellyfin:
     image: "jellyfin/jellyfin:latest"
     container_name: "jellyfin"
@@ -33,15 +55,4 @@ services:
     ports:
       - "6881:6881"
       - "6881:6881/udp"
-    restart: "unless-stopped"
-
-  caddy:
-    image: "caddy:2-alpine"
-    container_name: "caddy"
-    ports:
-      - "80:80"
-    volumes:
-      - "./caddy/conf:/etc/caddy"
-      - "./caddy/data:/data"
-      - "./caddy/config:/config"
     restart: "unless-stopped"

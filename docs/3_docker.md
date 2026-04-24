@@ -25,12 +25,15 @@ I originally wanted to have one `compose.yaml` file within each directory and th
 1. I created the following layout using `sudo` (the `/srv/storage` was set up in the previous "NAS" step):
     ```sh
     .
+    |-- .env
+    |-- compose.yaml
     |-- caddy
     |   |-- conf
     |   |   `-- Caddyfile
     |   |-- config
     |   `-- data
-    |-- compose.yaml
+    |-- homarr
+    |   `-- appdata
     |-- jellyfin
     |   |-- cache
     |   `-- config
@@ -47,14 +50,17 @@ I originally wanted to have one `compose.yaml` file within each directory and th
     ```
 2. I set the owner to my user instead of root:
     ```sh
-    sudo chown -R void:void /srv/compose.yaml /srv/caddy /srv/jellyfin /srv/qbittorrent
+    sudo chown -R void:void /srv/.env /srv/compose.yaml /srv/caddy /srv/homarr /srv/jellyfin /srv/qbittorrent
     ```
 
 ## Docker Compose setup
 
+> [!WARNING]
+> The per-container steps are written in the exact chronological order as I originally did them. The files in `config/`, however, reflect the latest finalized setup, so keep that in mind as you continue reading.
+
 I need to put all of my services in the `compose.yaml` file.
 
-1. I set `/srv/compose.yaml` to `configs/compose.yaml` via `nano`. I omitted the `Caddy` setup on 1st run so the `8096:8096/tcp` port mapping needs to be added to the `srv/compose.yaml` for Jellyfin and `8080:8080` for qBittorrent.
+1. I set `/srv/compose.yaml` to `configs/compose.yaml` via `nano`. I omitted the `Caddy` setup on the first run, so the `8096:8096/tcp` port mapping needs to be added to `/srv/compose.yaml` for Jellyfin and `8080:8080` for qBittorrent.
 2. Inside `/srv`, I ran `docker compose config` to verify that my config is set up correctly.
 3. Still inside `/srv`, I ran `docker compose up -d` to start all containers.
 
@@ -72,19 +78,78 @@ I need to put all of my services in the `compose.yaml` file.
 2. I set the server name to `debian` and the preferred display language to `English`.
 3. I set the default (admin) username to `void` and generated a password using my password manager.
 4. I added my Movies (`data/movies`) and TV series (`data/tv`) libraries. I set the language to `English` and the region to `United States`. I also enabled metadata refresh every 90 days.
-5. I selected the preferred metadata language to `English` and the region to the `United States`.
+5. I selected the preferred metadata language to `English` and the region to `United States`.
 6. I left `Allow remote connections to this server` enabled.
 7. After the main page loaded, I clicked the profile icon in the top right corner and clicked `Dashboard` (Administration).
 8. I opened the `General` tab and set `Enable QuickConnect on this server` to `False`.
 9. I opened the `Branding` tab, set `Enable the splash screen image` to enabled, and entered custom CSS code from this repository: https://github.com/loof2736/scyfin
 10. I opened `Users` and created non-root user accounts, disabling `Hide this user from login screens`.
-11. I opened the `Playback` -> `Transcoding` tab and set Hardware Acceleration to `Intel Quicksync (QSV)`. I then ran `docker exec -it jellyfin /usr/lib/jellyfin-ffmpeg/vainfo` to retrieve supported codecs, and under `Enable hardware decoding for`, I checked everything except `AV1`, `HEVC RExt 8/10bit`, and `HEVC RExt 12bit`. Refer to docs: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#configure-with-linux-virtualization
+11. I opened the `Playback` -> `Transcoding` tab and set hardware acceleration to `Intel Quick Sync (QSV)`. I then ran `docker exec -it jellyfin /usr/lib/jellyfin-ffmpeg/vainfo` to retrieve supported codecs, and under `Enable hardware decoding for`, I checked everything except `AV1`, `HEVC RExt 8/10bit`, and `HEVC RExt 12bit`. Refer to docs: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#configure-with-linux-virtualization
 12. I verified that the hardware acceleration is working correctly, as described here: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#verify-on-linux
 
 ## Caddy setup
 
 1. I set `/srv/caddy/conf/Caddyfile` to `configs/Caddyfile` via `nano`.
-2. I re-added `caddy` container to `/srv/compose.yaml`, this time without the the port mapping for Jellyfin and qBittorrent.
+2. I re-added the `caddy` container to `/srv/compose.yaml`, this time without the port mapping for Jellyfin and qBittorrent.
 3. In the Jellyfin `Dashboard` (Administration) (see `##Jellyfin-setup`), I opened the `Networking` tab and set the `Base URL` to `/jellyfin` and clicked `Save` at the bottom.
 4. I ran `docker compose down` and `docker compose up -d` for a clean restart.
-5. In the Jellyfin `Dashboard` (Administration) (see `##Jellyfin-setup`), I opened the `Networking` tab and set the `Known Proxies` to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` (e.g., `123.12.0.3`). When traffic passes through a reverse proxy, Jellyfin will otherwise see the proxy's IP instead of the client's IP.
+5. In the Jellyfin `Dashboard` (Administration) (see `##Jellyfin-setup`), I opened the `Networking` tab and set `Known Proxies` to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` (e.g., `123.12.0.3`). When traffic passes through a reverse proxy, Jellyfin will otherwise see the proxy's IP instead of the client's IP.
+
+## Homarr setup
+
+1. I created a `.env` file at `/srv/.env` and set it to `SECRET_ENCRYPTION_KEY=replace_me`, where `replace_me` is the output of `openssl rand -hex 32`, as seen in `configs/.env.example`.
+2. I ran `docker compose down` and `docker compose up -d` for a clean restart.
+3. I opened Safari and went to `debian.local`.
+4. I left the language as `English (US)`, set the theme to `Dark`, and clicked `Start from scratch`.
+5. I used my password manager to generate a strong user password.
+6. I left analytics enabled to support open source and disabled all search crawling.
+7. I clicked `Create your first board`, clicked `New board`, and called it `home-server`, marking it as public.
+8. In the sidebar on the left, I clicked `Integrations`.
+9. I clicked `New integration` and selected `Jellyfin`, then entered the following:
+    - Name: `Jellyfin` (default)
+    - URL: `http://jellyfin:8096/jellyfin`
+    - API Key: (I had to sign in to my Jellyfin admin dashboard, then under the `API Keys` tab in the sidebar, I generated a new API key called `Homarr`)
+    - Create app: `Enabled`
+    - App URL: `http://debian.local/jellyfin/`
+10. I clicked `New integration` again and selected `qBittorrent`, then entered the following:
+    - Name: `qBittorrent` (default)
+    - URL: `http://qbittorrent:8080`
+    - Username & Password: (I took them from my password manager)
+    - Create app: `Enabled`
+    - App URL: `http://debian.local/qbt/`
+11. In the sidebar on the left, I clicked `Settings`, and under `Global home board`, I set `home-server` as both the `Global home board` and the `Global mobile board`, then clicked `Save`. I also set `Appearance` to `Dark`.
+12. In the sidebar, I clicked `Boards` and within `home-server`, I clicked `Open board`.
+13. I clicked the `Edit mode` button in the top right corner, then selected `Add an app` from the submenu. I added both `Jellyfin` and `qBittorrent` that way.
+14. I clicked the `Edit mode` button again, this time selecting `New item`, then I selected `Media releases`. I clicked `Edit item` on the new item and set `Integrations` to `Jellyfin`.
+15. I did the same, but with `Download Client` for `qBittorrent`.
+16. I clicked the `Settings` button in the top right corner. I then did the following:
+    - In the `General` expander, I set the `Page title` and the `Meta title` to `Home Server`. I also set the `Logo image URL` and `Favicon image URL` to Debian.
+    - In the `Layout` expander, I created three layouts:
+      - Small: breakpoint `0`, `2` columns
+      - Medium: breakpoint `768`, `6` columns
+      - Large: breakpoint `1200`, `8` columns
+    - In the `Background` expander, I set the background to a custom image.
+    - In the `Appearance` expander, I set the opacity to `70%`.
+17. I resized my physical web browser's width and adjusted the icon positions.
+
+```md
+qBittorrent app-side settings:
+
+Go to `Tools -> Options -> WebUI`.
+
+Set the bind IP to `*`. qBittorrent's Caddy guide says to leave the IP set to `*`. This matters because Caddy will connect from another container, not from qBittorrent itself. ([GitHub][5])
+
+Set the WebUI port to `8080`, since that is what your compose file already uses.
+
+Turn off `Use UPnP / NAT-PMP to forward the port from my router`. qBittorrent's guide explicitly says to disable it. ([GitHub][5])
+
+Turn off `Use HTTPS instead of HTTP`. Since Caddy is the reverse proxy in front, qBittorrent's own guide explicitly says to leave qBittorrent on HTTP behind the proxy. ([GitHub][5])
+
+Turn on `Clickjacking protection` and `CSRF protection`. qBittorrent's Caddy guide explicitly says to enable both. ([GitHub][5])
+
+Turn on `Host header validation`. qBittorrent's Caddy guide says to enable it and confirm `*; example.domain` is present in the `server domains` box. The qBittorrent WebUI API describes this field as a semicolon-separated list of domains accepted when performing Host header validation. For your LAN-only setup, the practical version is something like `*; 192.168.1.50; media.lan` if those are the names you use. ([GitHub][5])
+
+Do not enable qBittorrent's built-in HTTPS for this setup. Also do not add a `Secure` cookie rule in Caddy for this HTTP-only LAN setup. qBittorrent's reverse-proxy docs warn that forcing the cookie `Secure` flag while the external site is only HTTP causes login loops. ([GitHub][3])
+
+If qBittorrent gives `Unauthorized` or login-loop behavior, the usual cause is the WebUI security settings not matching the reverse proxy setup, especially host header validation, server domains, or an HTTP/HTTPS mismatch.
+```

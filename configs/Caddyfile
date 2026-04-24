@@ -13,8 +13,6 @@
 :80 {
     # Process logic in this exact order
     route {
-        # Redirect `http://debian.local/` to `http://debian.local/jellyfin/`
-        redir / /jellyfin/ 308
 
         # Normalize `/jellyfin` to `/jellyfin/`
         redir /jellyfin /jellyfin/ 308
@@ -35,7 +33,7 @@
             }
         }
 
-        # Return 404 for everything else
-        respond 404
+        # Send requests to Homarr on port 8080 for everything else (`http://debian.local/)
+        reverse_proxy homarr:7575
     }
 }
