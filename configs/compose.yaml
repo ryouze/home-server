@@ -13,6 +13,24 @@ services:
       - "./caddy/conf:/etc/caddy"
     restart: "unless-stopped"
 
+  pihole:
+    image: "pihole/pihole:latest"
+    container_name: "pihole"
+    environment:
+      TZ: "Europe/Warsaw"
+      PIHOLE_GID: "1000"
+      PIHOLE_UID: "1000"
+      FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
+      FTLCONF_dns_listeningMode: "ALL"
+      FTLCONF_webserver_api_password: "${PIHOLE_WEB_PASSWORD}"
+      FTLCONF_webserver_paths_prefix: "/pihole"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    volumes:
+      - "./pihole/etc-pihole:/etc/pihole"
+    restart: "unless-stopped"
+
   homarr:
     image: "ghcr.io/homarr-labs/homarr:latest"
     container_name: "homarr"
@@ -55,22 +73,4 @@ services:
     volumes:
       - "./storage/data:/data"
       - "./qbittorrent/config:/config"
-    restart: "unless-stopped"
-
-  pihole:
-    image: "pihole/pihole:latest"
-    container_name: "pihole"
-    environment:
-      TZ: "Europe/Warsaw"
-      PIHOLE_GID: "1000"
-      PIHOLE_UID: "1000"
-      FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
-      FTLCONF_dns_listeningMode: "ALL"
-      FTLCONF_webserver_api_password: "${PIHOLE_WEB_PASSWORD}"
-      FTLCONF_webserver_paths_prefix: "/pihole"
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-    volumes:
-      - "./pihole/etc-pihole:/etc/pihole"
     restart: "unless-stopped"
