@@ -11,38 +11,33 @@
 
 # Listen on HTTP port 80
 :80 {
-    # Process logic in this exact order
-    route {
+    # Redirect bare app paths to their canonical trailing-slash or admin paths
+    redir /jellyfin /jellyfin/ 308
+    redir /qbt /qbt/ 308
+    redir /pihole /pihole/admin/ 308
+    redir /pihole/ /pihole/admin/ 308
 
-        # Normalize `/jellyfin` to `/jellyfin/`
-        redir /jellyfin /jellyfin/ 308
+    # Proxy Jellyfin requests without stripping `/jellyfin`
+    # This must match Jellyfin's Base URL setting
+    handle /jellyfin/* {
+        reverse_proxy jellyfin:8096
+    }
 
-        # Send requests under `/jellyfin/` to Jellyfin on port 8096
-        # Preserve the `/jellyfin` prefix so it matches Jellyfin's Base URL setting
-        reverse_proxy /jellyfin/* jellyfin:8096
-
-        # Normalize `/qbt` to `/qbt/`
-        redir /qbt /qbt/ 308
-
-        # Match requests under `/qbt/` and strip the `/qbt` prefix before proxying
-        handle_path /qbt/* {
-            # Send those requests to qBittorrent on port 8080
-            reverse_proxy qbittorrent:8080 {
-                # Set the upstream `Host` header to the backend address
-                header_up Host {upstream_hostport}
-            }
+    # Proxy qBittorrent requests and strip `/qbt` before sending them upstream
+    handle_path /qbt/* {
+        reverse_proxy qbittorrent:8080 {
+            # Send the backend address as the upstream Host header
+            header_up Host {upstream_hostport}
         }
+    }
 
-        # Normalize `/pihole` to `/pihole/admin/`
-        redir /pihole /pihole/admin/ 308
+    # Proxy Pi-hole requests and strip `/pihole` before sending them upstream
+    handle_path /pihole/* {
+        reverse_proxy pihole:80
+    }
 
-        # Match requests under `/pihole/` and strip the `/pihole` prefix before proxying
-        handle_path /pihole/* {
-            # Send those requests to Pi-hole on port 80
-            reverse_proxy pihole:80
-        }
-
-        # Send requests to Homarr on port 8080 for everything else (`http://debian.local/`)
+    # Proxy all remaining requests to Homarr
+    handle {
         reverse_proxy homarr:7575
     }
 }
