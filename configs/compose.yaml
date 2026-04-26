@@ -8,17 +8,17 @@ services:
     ports:
       - "80:80"
     volumes:
-      - "./caddy/conf:/etc/caddy"
       - "./caddy/data:/data"
       - "./caddy/config:/config"
+      - "./caddy/conf:/etc/caddy"
     restart: "unless-stopped"
 
   homarr:
     image: "ghcr.io/homarr-labs/homarr:latest"
     container_name: "homarr"
     environment:
-      PUID: "1000"
       PGID: "1000"
+      PUID: "1000"
       SECRET_ENCRYPTION_KEY: "${SECRET_ENCRYPTION_KEY}"
     volumes:
       - "./homarr/appdata:/appdata"
@@ -28,33 +28,33 @@ services:
     image: "jellyfin/jellyfin:latest"
     container_name: "jellyfin"
     user: "1000:1000"
-    ports:
-      - "7359:7359/udp"
-    volumes:
-      - "./jellyfin/config:/config"
-      - "./jellyfin/cache:/cache"
-      - "./storage/data:/data:ro"
     group_add:
       - "992"
     devices:
       - "/dev/dri/renderD128:/dev/dri/renderD128"
+    ports:
+      - "7359:7359/udp"
+    volumes:
+      - "./jellyfin/cache:/cache"
+      - "./storage/data:/data:ro"
+      - "./jellyfin/config:/config"
     restart: "unless-stopped"
 
   qbittorrent:
     image: "lscr.io/linuxserver/qbittorrent:latest"
     container_name: "qbittorrent"
     environment:
-      PUID: "1000"
-      PGID: "1000"
       TZ: "Europe/Warsaw"
+      PGID: "1000"
+      PUID: "1000"
       WEBUI_PORT: "8080"
       TORRENTING_PORT: "6881"
-    volumes:
-      - "./qbittorrent/config:/config"
-      - "./storage/data:/data"
     ports:
       - "6881:6881"
       - "6881:6881/udp"
+    volumes:
+      - "./storage/data:/data"
+      - "./qbittorrent/config:/config"
     restart: "unless-stopped"
 
   pihole:
@@ -62,15 +62,15 @@ services:
     container_name: "pihole"
     environment:
       TZ: "Europe/Warsaw"
-      PIHOLE_UID: "1000"
       PIHOLE_GID: "1000"
-      FTLCONF_webserver_api_password: "${PIHOLE_WEB_PASSWORD}"
-      FTLCONF_dns_listeningMode: "ALL"
+      PIHOLE_UID: "1000"
       FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
+      FTLCONF_dns_listeningMode: "ALL"
+      FTLCONF_webserver_api_password: "${PIHOLE_WEB_PASSWORD}"
       FTLCONF_webserver_paths_prefix: "/pihole"
-    volumes:
-      - "./pihole/etc-pihole:/etc/pihole"
     ports:
       - "53:53/tcp"
       - "53:53/udp"
+    volumes:
+      - "./pihole/etc-pihole:/etc/pihole"
     restart: "unless-stopped"
