@@ -1,6 +1,6 @@
 # Docker
 
-I want to use Docker for managing all of my user-facing apps because it provides isolation from the underlying OS and makes removing them easy, so it's good for experimentation.
+I want to use Docker to manage all of my user-facing apps because it provides isolation from the underlying OS and makes removing them easy, so it is good for experimentation.
 
 ## Install Docker
 
@@ -22,7 +22,7 @@ I need to set up Docker for all of my home server services.
 
 I originally wanted to have one `compose.yaml` file within each directory and then one global `compose.yaml` that imports them. However, I later realized that this much indirection is not worth it for a simple home server.
 
-1. I created the following layout using `sudo` (the `/srv/storage` was set up in the previous "NAS" step):
+1. I created the following layout using `sudo` (`/srv/storage` was set up in the previous "NAS" step):
     ```sh
     .
     |-- .env
@@ -58,12 +58,12 @@ I originally wanted to have one `compose.yaml` file within each directory and th
 ## Docker Compose setup
 
 > [!WARNING]
-> The per-container steps are written in the exact chronological order as I originally did them. The files in `config/`, however, reflect the latest finalized setup, so keep that in mind as you continue reading.
+> The per-container steps are written in the exact chronological order in which I originally did them. The files in `config/`, however, reflect the latest finalized setup, so keep that in mind as you continue reading.
 
 I need to put all of my services in the `compose.yaml` file.
 
 1. I set `/srv/compose.yaml` to `configs/compose.yaml` via `nano`. I omitted the `Caddy` setup on the first run, so the `8096:8096/tcp` port mapping needs to be added to `/srv/compose.yaml` for Jellyfin and `8080:8080` for qBittorrent.
-2. Inside `/srv`, I ran `docker compose config` to verify that my config is set up correctly.
+2. Inside `/srv`, I ran `docker compose config` to verify that my config was set up correctly.
 3. Still inside `/srv`, I ran `docker compose up -d` to start all containers.
 
 ## qBittorrent setup
@@ -80,22 +80,22 @@ I need to put all of my services in the `compose.yaml` file.
 2. I set the server name to `debian` and the preferred display language to `English`.
 3. I set the default (admin) username to `void` and generated a password using my password manager.
 4. I added my Movies (`data/movies`) and TV series (`data/tv`) libraries. I set the language to `English` and the region to `United States`. I also enabled metadata refresh every 90 days.
-5. I selected the preferred metadata language to `English` and the region to `United States`.
+5. I set the preferred metadata language to `English` and the region to `United States`.
 6. I left `Allow remote connections to this server` enabled.
 7. After the main page loaded, I clicked the profile icon in the top right corner and clicked `Dashboard` (Administration).
 8. I opened the `General` tab and set `Enable QuickConnect on this server` to `False`.
-9. I opened the `Branding` tab, set `Enable the splash screen image` to enabled, and entered custom CSS code from this repository: https://github.com/loof2736/scyfin
+9. I opened the `Branding` tab, enabled `Enable the splash screen image`, and entered custom CSS code from this repository: https://github.com/loof2736/scyfin
 10. I opened `Users` and created non-root user accounts, disabling `Hide this user from login screens`.
-11. I opened the `Playback` -> `Transcoding` tab and set hardware acceleration to `Intel Quick Sync (QSV)`. I then ran `docker exec -it jellyfin /usr/lib/jellyfin-ffmpeg/vainfo` to retrieve supported codecs, and under `Enable hardware decoding for`, I checked everything except `AV1`, `HEVC RExt 8/10bit`, and `HEVC RExt 12bit`. Refer to docs: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#configure-with-linux-virtualization
-12. I verified that the hardware acceleration is working correctly, as described here: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#verify-on-linux
+11. I opened the `Playback` -> `Transcoding` tab and set hardware acceleration to `Intel Quick Sync (QSV)`. I then ran `docker exec -it jellyfin /usr/lib/jellyfin-ffmpeg/vainfo` to retrieve supported codecs, and under `Enable hardware decoding for`, I checked everything except `AV1`, `HEVC RExt 8/10bit`, and `HEVC RExt 12bit`. Refer to the docs: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#configure-with-linux-virtualization
+12. I verified that the hardware acceleration was working correctly, as described here: https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel#verify-on-linux
 
 ## Caddy setup
 
 1. I set `/srv/caddy/conf/Caddyfile` to `configs/Caddyfile` via `nano`.
 2. I re-added the `caddy` container to `/srv/compose.yaml`, this time without the port mapping for Jellyfin and qBittorrent.
-3. In the Jellyfin `Dashboard` (Administration) (see `##Jellyfin-setup`), I opened the `Networking` tab and set the `Base URL` to `/jellyfin` and clicked `Save` at the bottom.
+3. In the Jellyfin `Dashboard` (Administration) (see `## Jellyfin setup`), I opened the `Networking` tab, set the `Base URL` to `/jellyfin`, and clicked `Save` at the bottom.
 4. I ran `docker compose down` and `docker compose up -d` for a clean restart.
-5. In the Jellyfin `Dashboard` (Administration) (see `##Jellyfin-setup`), I opened the `Networking` tab and set `Known Proxies` to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` (e.g., `123.12.0.3`). When traffic passes through a reverse proxy, Jellyfin will otherwise see the proxy's IP instead of the client's IP.
+5. In the Jellyfin `Dashboard` (Administration) (see `## Jellyfin setup`), I opened the `Networking` tab and set `Known Proxies` to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` (e.g., `123.12.0.3`). When traffic passes through a reverse proxy, Jellyfin will otherwise see the proxy's IP instead of the client's IP.
 
 ## Homarr setup
 
@@ -110,7 +110,7 @@ I need to put all of my services in the `compose.yaml` file.
 9. I clicked `New integration` and selected `Jellyfin`, then entered the following:
     - Name: `Jellyfin` (default)
     - URL: `http://jellyfin:8096/jellyfin`
-    - API Key: (I had to sign in to my Jellyfin admin dashboard, then under the `API Keys` tab in the sidebar, I generated a new API key called `Homarr`)
+    - API Key: (I had to sign in to my Jellyfin admin dashboard, then, under the `API Keys` tab in the sidebar, I generated a new API key called `Homarr`)
     - Create app: `Enabled`
     - App URL: `http://debian.local/jellyfin/`
 10. I clicked `New integration` again and selected `qBittorrent`, then entered the following:
@@ -120,7 +120,7 @@ I need to put all of my services in the `compose.yaml` file.
     - Create app: `Enabled`
     - App URL: `http://debian.local/qbt/`
 11. In the sidebar on the left, I clicked `Settings`, and under `Global home board`, I set `home-server` as both the `Global home board` and the `Global mobile board`, then clicked `Save`. I also set `Appearance` to `Dark`.
-12. In the sidebar, I clicked `Boards` and within `home-server`, I clicked `Open board`.
+12. In the sidebar, I clicked `Boards`, and within `home-server`, I clicked `Open board`.
 13. I clicked the `Edit mode` button in the top right corner, then selected `Add an app` from the submenu. I added both `Jellyfin` and `qBittorrent` that way.
 14. I clicked the `Edit mode` button again, this time selecting `New item`, then I selected `Media releases`. I clicked `Edit item` on the new item and set `Integrations` to `Jellyfin`.
 15. I did the same, but with `Download Client` for `qBittorrent`.
@@ -140,12 +140,12 @@ I need to put all of my services in the `compose.yaml` file.
 2. I appended `PIHOLE_WEB_PASSWORD=replace_me` to `/srv/.env`, where `replace_me` is the output of my password manager.
 3. I ran `docker compose down` and `docker compose up -d` for a clean restart.
 4. I opened Safari and went to `http://debian.local/pihole/admin/`, logging in with my password to check that the web UI works.
-5. I ran `dig @127.0.0.1 doubleclick.net` to check if the ad domain will return `0.0.0.0`. I also ran `dig @192.168.1.67 doubleclick.net` from my MacBook, expecting `0.0.0.0` too.
+5. I ran `dig @127.0.0.1 doubleclick.net` to check whether the ad domain would return `0.0.0.0`. I also ran `dig @192.168.1.67 doubleclick.net` from my MacBook, expecting `0.0.0.0` too.
 6. I logged into my router (see `#1_debian.md` for more information) and changed both my primary and secondary DNS to `192.168.1.67`.
 7. I added Pi-hole to Homarr:
     - Name: `Pi-hole` (default)
     - URL: `http://pihole`
-    - API Key: (same as in `PIHOLE_WEB_PASSWORD`)
+    - API Key: (Same as in `PIHOLE_WEB_PASSWORD`)
     - Create app: `Enabled`
     - App URL: `http://debian.local/pihole/admin/`
 
