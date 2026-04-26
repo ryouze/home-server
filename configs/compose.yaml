@@ -56,3 +56,21 @@ services:
       - "6881:6881"
       - "6881:6881/udp"
     restart: "unless-stopped"
+
+  pihole:
+    image: "pihole/pihole:latest"
+    container_name: "pihole"
+    environment:
+      TZ: "Europe/Warsaw"
+      PIHOLE_UID: "1000"
+      PIHOLE_GID: "1000"
+      FTLCONF_webserver_api_password: "${PIHOLE_WEB_PASSWORD}"
+      FTLCONF_dns_listeningMode: "ALL"
+      FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
+      FTLCONF_webserver_paths_prefix: "/pihole"
+    volumes:
+      - "./pihole/etc-pihole:/etc/pihole"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    restart: "unless-stopped"

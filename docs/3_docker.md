@@ -34,6 +34,8 @@ I originally wanted to have one `compose.yaml` file within each directory and th
     |   `-- data
     |-- homarr
     |   `-- appdata
+    |-- pihole
+    |   `-- etc-pihole
     |-- jellyfin
     |   |-- cache
     |   `-- config
@@ -48,9 +50,9 @@ I originally wanted to have one `compose.yaml` file within each directory and th
             |-- temp
             `-- tv
     ```
-2. I set the owner to my user instead of root:
+2. I set the owner to my user (`void`) instead of root again:
     ```sh
-    sudo chown -R void:void /srv/.env /srv/compose.yaml /srv/caddy /srv/homarr /srv/jellyfin /srv/qbittorrent
+    sudo chown -R void:void /srv
     ```
 
 ## Docker Compose setup
@@ -131,6 +133,22 @@ I need to put all of my services in the `compose.yaml` file.
     - In the `Background` expander, I set the background to a custom image.
     - In the `Appearance` expander, I set the opacity to `70%`.
 17. I resized my physical web browser's width and adjusted the icon positions.
+
+## Pi-hole setup
+
+1. I set `/srv/caddy/conf/Caddyfile` to `configs/Caddyfile` via `nano` again.
+2. I appended `PIHOLE_WEB_PASSWORD=replace_me` to `/srv/.env`, where `replace_me` is the output of my password manager.
+3. I ran `docker compose down` and `docker compose up -d` for a clean restart.
+4. I opened Safari and went to `http://debian.local/pihole/admin/`, logging in with my password to check that the web UI works.
+5. I ran `dig @127.0.0.1 doubleclick.net` to check if the ad domain will return `0.0.0.0`. I also ran `dig @192.168.1.67 doubleclick.net` from my MacBook, expecting `0.0.0.0` too.
+6. I logged into my router (see `#1_debian.md` for more information) and changed both my primary and secondary DNS to `192.168.1.67`.
+7. I added Pi-hole to Homarr:
+    - Name: `Pi-hole` (default)
+    - URL: `http://pihole`
+    - API Key: (same as in `PIHOLE_WEB_PASSWORD`)
+    - Create app: `Enabled`
+    - App URL: `http://debian.local/pihole/admin/`
+
 
 ```md
 qBittorrent app-side settings:

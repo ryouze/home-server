@@ -33,7 +33,16 @@
             }
         }
 
-        # Send requests to Homarr on port 8080 for everything else (`http://debian.local/)
+        # Normalize `/pihole` to `/pihole/admin/`
+        redir /pihole /pihole/admin/ 308
+
+        # Match requests under `/pihole/` and strip the `/pihole` prefix before proxying
+        handle_path /pihole/* {
+            # Send those requests to Pi-hole on port 80
+            reverse_proxy pihole:80
+        }
+
+        # Send requests to Homarr on port 8080 for everything else (`http://debian.local/`)
         reverse_proxy homarr:7575
     }
 }
