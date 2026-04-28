@@ -1,6 +1,6 @@
 # home-server
 
-home-server is a documentation repository for my home server, covering general Linux setup and Docker services.
+Documentation repository for my home server, covering general Linux setup and Docker services.
 
 ## Motivation
 
@@ -9,7 +9,6 @@ I am upgrading my home server, and I thought it was a good opportunity to do it 
 ## Hardware
 
 Lenovo ThinkCentre M920q Tiny:
-
 - Intel i5-9500T
 - 16 GB RAM
 - 256 GB internal NVMe SSD
@@ -20,13 +19,13 @@ I plan to add an internal SATA SSD in the future.
 ## Software
 
 Headless Debian (accessed via SSH), running:
-
 - Caddy (reverse proxy)
 - Pi-hole (DNS filtering)
 - Homarr (dashboard)
 - Jellyfin (media server)
 - qBittorrent (torrenting client)
 - Samba (file sharing)
+- Tailscale (remote access VPN)
 
 ## Contributing
 

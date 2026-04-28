@@ -1,0 +1,14 @@
+{
+	// Only allow access defined below (deny everything else by default)
+	"grants": [
+		// The tailnet owner may access their own devices on TCP port 80.
+		{
+			"src": ["autogroup:owner"],
+			"dst": ["autogroup:self"],
+			"ip":  ["tcp:80"],
+		},
+	],
+
+	// Disable Tailscale SSH entirely
+	"ssh": [],
+}

@@ -88,7 +88,7 @@ I now have convenient SSH access, so I can continue working on my MacBook.
 3. I went back to `Exit` and selected `Save Changes and Exit`.
 4. I unplugged everything, leaving only the power cable and Ethernet connected.
 
-## Static IP
+## Static local IP
 
 I need to set a DHCP reservation for the server.
 
@@ -104,6 +104,15 @@ I need to set a DHCP reservation for the server.
 5. I opened `Network` -> `LAN` and added them under `Static DHCP Entry`. I used `192.168.1.67` as the reserved IP.
 6. I ran `sudo reboot` on the Debian server.
 7. I SSHed via `ssh void@192.168.1.67` to confirm that it worked.
+
+## Tailscale
+
+I want to be able to access Jellyfin when I am outside my home; this is only a fallback for holidays and similar situations, not my primary way of accessing it.
+
+1. I installed the Tailscale app on iOS and signed in with Apple.
+2. I followed the Linux installation instructions, running `sudo tailscale up --accept-dns=false`: https://tailscale.com/docs/install/linux
+3. I also disabled logging: https://tailscale.com/docs/install/linux#disable-logging
+4. In the admin console (https://login.tailscale.com/admin/machines), I opened the `...` menu and clicked `Disable key expiry`. Under the `Access controls` tab, I set the file to `configs/tailscale.hujson`.
 
 ## Final tweaks
 
