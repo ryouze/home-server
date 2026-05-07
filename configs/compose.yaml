@@ -10,7 +10,7 @@ services:
     volumes:
       - "./caddy/data:/data"
       - "./caddy/config:/config"
-      - "./caddy/conf:/etc/caddy"
+      - "./caddy/conf:/etc/caddy:ro"
     restart: "unless-stopped"
 
   pihole:
