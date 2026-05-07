@@ -36,8 +36,8 @@
         reverse_proxy pihole:80
     }
 
-    # Proxy all remaining requests to Homarr
+    # Proxy all remaining requests to Dashy
     handle {
-        reverse_proxy homarr:7575
+        reverse_proxy dashy:8080
     }
 }

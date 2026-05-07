@@ -31,15 +31,14 @@ services:
       - "./pihole/etc-pihole:/etc/pihole"
     restart: "unless-stopped"
 
-  homarr:
-    image: "ghcr.io/homarr-labs/homarr:latest"
-    container_name: "homarr"
-    environment:
-      PGID: "1000"
-      PUID: "1000"
-      SECRET_ENCRYPTION_KEY: "${SECRET_ENCRYPTION_KEY}"
+  dashy:
+    image: "lissy93/dashy:latest"
+    container_name: "dashy"
+    user: "1000:1000"
     volumes:
-      - "./homarr/appdata:/appdata"
+      - "./dashy/user-data:/app/user-data"
+    environment:
+      NODE_ENV: "production"
     restart: "unless-stopped"
 
   jellyfin:

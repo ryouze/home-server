@@ -1,0 +1,38 @@
+pageInfo:
+  title: Home Server
+  description: debian.local
+  navLinks:
+    - title: Documentation
+      path: https://dashy.to/docs
+appConfig:
+  theme: glass
+  defaultOpeningMethod: sametab
+  statusCheck: true
+  language: en
+  webSearch:
+    disableWebSearch: true
+  hideComponents:
+    hideSearch: true
+sections:
+  - name: Media
+    items:
+      - title: Jellyfin
+        description: Media server
+        icon: hl-jellyfin
+        url: /jellyfin/
+        statusCheck: true
+        statusCheckUrl: http://jellyfin:8096/jellyfin/
+      - title: qBittorrent
+        description: Torrent client
+        icon: hl-qbittorrent
+        url: /qbt/
+        statusCheck: true
+        statusCheckUrl: http://qbittorrent:8080/
+  - name: Network
+    items:
+      - title: Pi-hole
+        description: DNS filtering
+        icon: hl-pihole
+        url: /pihole/admin/
+        statusCheck: true
+        statusCheckUrl: http://pihole:80/admin/login

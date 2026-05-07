@@ -32,8 +32,8 @@ I originally wanted to have one `compose.yaml` file within each directory and th
     |   |   `-- Caddyfile
     |   |-- config
     |   `-- data
-    |-- homarr
-    |   `-- appdata
+    |-- dashy
+    |   `-- user-data
     |-- pihole
     |   `-- etc-pihole
     |-- jellyfin
@@ -97,42 +97,10 @@ I need to put all of my services in the `compose.yaml` file.
 4. I ran `docker compose down` and `docker compose up -d` for a clean restart.
 5. In the Jellyfin `Dashboard` (Administration) (see `## Jellyfin setup`), I opened the `Networking` tab and set `Known Proxies` to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` (e.g., `123.12.0.3`). When traffic passes through a reverse proxy, Jellyfin will otherwise see the proxy's IP instead of the client's IP.
 
-## Homarr setup
+## Dashy setup
 
-1. I created a `.env` file at `/srv/.env` and set it to `SECRET_ENCRYPTION_KEY=replace_me`, where `replace_me` is the output of `openssl rand -hex 32`, as seen in `configs/.env.example`.
+1. I set `/srv/dashy/user-data/conf.yml` to `configs/conf.yml` via `nano`.
 2. I ran `docker compose down` and `docker compose up -d` for a clean restart.
-3. I opened Safari and went to `debian.local`.
-4. I left the language as `English (US)`, set the theme to `Dark`, and clicked `Start from scratch`.
-5. I used my password manager to generate a strong user password.
-6. I left analytics enabled to support open source and disabled all search crawling.
-7. I clicked `Create your first board`, clicked `New board`, and called it `home-server`, marking it as public.
-8. In the sidebar on the left, I clicked `Integrations`.
-9. I clicked `New integration` and selected `Jellyfin`, then entered the following:
-    - Name: `Jellyfin` (default)
-    - URL: `http://jellyfin:8096/jellyfin`
-    - API Key: (I had to sign in to my Jellyfin admin dashboard, then, under the `API Keys` tab in the sidebar, I generated a new API key called `Homarr`)
-    - Create app: `Enabled`
-    - App URL: `http://debian.local/jellyfin/`
-10. I clicked `New integration` again and selected `qBittorrent`, then entered the following:
-    - Name: `qBittorrent` (default)
-    - URL: `http://qbittorrent:8080`
-    - Username & Password: (I took them from my password manager)
-    - Create app: `Enabled`
-    - App URL: `http://debian.local/qbt/`
-11. In the sidebar on the left, I clicked `Settings`, and under `Global home board`, I set `home-server` as both the `Global home board` and the `Global mobile board`, then clicked `Save`. I also set `Appearance` to `Dark`.
-12. In the sidebar, I clicked `Boards`, and within `home-server`, I clicked `Open board`.
-13. I clicked the `Edit mode` button in the top right corner, then selected `Add an app` from the submenu. I added both `Jellyfin` and `qBittorrent` that way.
-14. I clicked the `Edit mode` button again, this time selecting `New item`, then I selected `Media releases`. I clicked `Edit item` on the new item and set `Integrations` to `Jellyfin`.
-15. I did the same, but with `Download Client` for `qBittorrent`.
-16. I clicked the `Settings` button in the top right corner. I then did the following:
-    - In the `General` expander, I set the `Page title` and the `Meta title` to `Home Server`. I also set the `Logo image URL` and `Favicon image URL` to Debian.
-    - In the `Layout` expander, I created three layouts:
-      - Small: breakpoint `0`, `2` columns
-      - Medium: breakpoint `768`, `6` columns
-      - Large: breakpoint `1200`, `8` columns
-    - In the `Background` expander, I set the background to a custom image.
-    - In the `Appearance` expander, I set the opacity to `70%`.
-17. I resized my physical web browser's width and adjusted the icon positions.
 
 ## Pi-hole setup
 
@@ -142,12 +110,6 @@ I need to put all of my services in the `compose.yaml` file.
 4. I opened Safari and went to `http://debian.local/pihole/admin/`, logging in with my password to check that the web UI works.
 5. I ran `dig @127.0.0.1 doubleclick.net` to check whether the ad domain would return `0.0.0.0`. I also ran `dig @192.168.1.67 doubleclick.net` from my MacBook, expecting `0.0.0.0` too.
 6. I logged into my router (see `#1_debian.md` for more information) and changed both my primary and secondary DNS to `192.168.1.67`.
-7. I added Pi-hole to Homarr:
-    - Name: `Pi-hole` (default)
-    - URL: `http://pihole`
-    - API Key: (Same as in `PIHOLE_WEB_PASSWORD`)
-    - Create app: `Enabled`
-    - App URL: `http://debian.local/pihole/admin/`
 
 
 ```md
