@@ -17,6 +17,10 @@
     redir /pihole /pihole/admin/ 308
     redir /pihole/ /pihole/admin/ 308
     redir /filebrowser /filebrowser/ 308
+    redir /sonarr /sonarr/ 308
+    redir /radarr /radarr/ 308
+    redir /prowlarr /prowlarr/ 308
+    redir /bazarr /bazarr/ 308
 
     # Proxy Jellyfin requests without stripping `/jellyfin`
     # This must match Jellyfin's Base URL setting
@@ -40,6 +44,30 @@
     # Proxy File Browser requests and strip `/filebrowser` before sending them upstream
     handle_path /filebrowser/* {
         reverse_proxy filebrowser:80
+    }
+
+    # Proxy Sonarr requests without stripping `/sonarr`
+    # This must match Sonarr's URL Base setting
+    handle /sonarr/* {
+        reverse_proxy sonarr:8989
+    }
+
+    # Proxy Radarr requests without stripping `/radarr`
+    # This must match Radarr's URL Base setting
+    handle /radarr/* {
+        reverse_proxy radarr:7878
+    }
+
+    # Proxy Prowlarr requests without stripping `/prowlarr`
+    # This must match Prowlarr's URL Base setting
+    handle /prowlarr/* {
+        reverse_proxy prowlarr:9696
+    }
+
+    # Proxy Bazarr requests without stripping `/bazarr`
+    # This must match Bazarr's URL Base setting
+    handle /bazarr/* {
+        reverse_proxy bazarr:6767
     }
 
     # Proxy all remaining requests to Dashy

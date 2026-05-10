@@ -20,28 +20,54 @@ sections:
   - name: Media
     items:
       - title: Jellyfin
-        description: Media server
-        icon: si-jellyfin
+        description: Stream movies, shows, music, and other media from the server
+        icon: sh-jellyfin
         url: /jellyfin/
         statusCheck: true
         statusCheckUrl: http://jellyfin:8096/jellyfin/
-      - title: qBittorrent
-        description: Torrent client
-        icon: si-qbittorrent
-        url: /qbt/
-        statusCheck: true
-        statusCheckUrl: http://qbittorrent:8080/
       - title: File Browser
-        description: Web file manager
-        icon: si-files
+        description: Browse, upload, download, and manage server files through the web
+        icon: sh-file-browser
         url: /filebrowser/
         statusCheck: true
         statusCheckUrl: http://caddy/filebrowser/
+  - name: Servarr
+    items:
+      - title: Sonarr
+        description: Monitor TV series and manage episode downloads
+        icon: sh-sonarr
+        url: /sonarr/
+        statusCheck: true
+        statusCheckUrl: http://sonarr:8989/
+      - title: Radarr
+        description: Monitor movies and manage film downloads
+        icon: sh-radarr
+        url: /radarr/
+        statusCheck: true
+        statusCheckUrl: http://radarr:7878/
+      - title: Prowlarr
+        description: Manage indexers used by Sonarr, Radarr, and other download tools
+        icon: sh-prowlarr
+        url: /prowlarr/
+        statusCheck: true
+        statusCheckUrl: http://prowlarr:9696/
+      - title: Bazarr
+        description: Find and manage subtitles for movies and TV shows
+        icon: sh-bazarr
+        url: /bazarr/
+        statusCheck: true
+        statusCheckUrl: http://bazarr:6767/
+      - title: qBittorrent
+        description: Add, monitor, and control torrent downloads
+        icon: sh-qbittorrent
+        url: /qbt/
+        statusCheck: true
+        statusCheckUrl: http://qbittorrent:8080/
   - name: Network
     items:
       - title: Pi-hole
-        description: DNS filtering
-        icon: si-pihole
+        description: Block ads and trackers with local DNS filtering
+        icon: sh-pi-hole
         url: /pihole/admin/
         statusCheck: true
         statusCheckUrl: http://pihole:80/admin/login
