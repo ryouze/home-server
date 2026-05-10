@@ -10,6 +10,7 @@ appConfig:
   theme: adventure
   defaultOpeningMethod: sametab
   statusCheck: true
+  statusCheckInterval: 0
   language: en
   webSearch:
     disableWebSearch: true
@@ -20,19 +21,19 @@ sections:
     items:
       - title: Jellyfin
         description: Media server
-        icon: hl-jellyfin
+        icon: si-jellyfin
         url: /jellyfin/
         statusCheck: true
         statusCheckUrl: http://jellyfin:8096/jellyfin/
       - title: qBittorrent
         description: Torrent client
-        icon: hl-qbittorrent
+        icon: si-qbittorrent
         url: /qbt/
         statusCheck: true
         statusCheckUrl: http://qbittorrent:8080/
       - title: File Browser
         description: Web file manager
-        icon: hl-filebrowser
+        icon: si-files
         url: /filebrowser/
         statusCheck: true
         statusCheckUrl: http://caddy/filebrowser/
@@ -40,7 +41,7 @@ sections:
     items:
       - title: Pi-hole
         description: DNS filtering
-        icon: hl-pihole
+        icon: si-pihole
         url: /pihole/admin/
         statusCheck: true
         statusCheckUrl: http://pihole:80/admin/login
