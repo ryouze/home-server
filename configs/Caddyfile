@@ -16,6 +16,7 @@
     redir /qbt /qbt/ 308
     redir /pihole /pihole/admin/ 308
     redir /pihole/ /pihole/admin/ 308
+    redir /filebrowser /filebrowser/ 308
 
     # Proxy Jellyfin requests without stripping `/jellyfin`
     # This must match Jellyfin's Base URL setting
@@ -34,6 +35,11 @@
     # Proxy Pi-hole requests and strip `/pihole` before sending them upstream
     handle_path /pihole/* {
         reverse_proxy pihole:80
+    }
+
+    # Proxy File Browser requests and strip `/filebrowser` before sending them upstream
+    handle_path /filebrowser/* {
+        reverse_proxy filebrowser:80
     }
 
     # Proxy all remaining requests to Dashy

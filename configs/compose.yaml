@@ -73,3 +73,14 @@ services:
       - "./storage/data:/data"
       - "./qbittorrent/config:/config"
     restart: "unless-stopped"
+
+  filebrowser:
+    image: "filebrowser/filebrowser:latest"
+    container_name: "filebrowser"
+    environment:
+      FB_BASE_URL: "/filebrowser"
+    volumes:
+      - "./storage/data:/srv"
+      - "./filebrowser/database:/database"
+      - "./filebrowser/config:/config"
+    restart: "unless-stopped"

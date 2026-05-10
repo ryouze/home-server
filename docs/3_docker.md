@@ -111,6 +111,12 @@ I need to put all of my services in the `compose.yaml` file.
 5. I ran `dig @127.0.0.1 doubleclick.net` to check whether the ad domain would return `0.0.0.0`. I also ran `dig @192.168.1.67 doubleclick.net` from my MacBook, expecting `0.0.0.0` too.
 6. I logged into my router (see `#1_debian.md` for more information) and changed both my primary and secondary DNS to `192.168.1.67`.
 
+## File Browser setup
+
+1. I ran `docker logs filebrowser` to retrieve the randomly-generated password.
+2. I opened Safari and went to `http://debian.local/files/`, logging in with this password.
+3. I clicked in the `Settings` sidebar, selected the `User Management` tab, clicked the `Edit` button next to the default `admin` account and then changed its username to `void` and password to the one from from my password manager.
+4. Still in the settings, I selected the `Global Settings` tab, set the `Minimum password length` to `20`, and set the `Instance name` to `debian.local`.
 
 ```md
 qBittorrent app-side settings:

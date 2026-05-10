@@ -1,3 +1,5 @@
+# /srv/dashy/user-data/conf.yml
+
 pageInfo:
   title: Home Server
   description: debian.local
@@ -5,7 +7,7 @@ pageInfo:
     - title: Documentation
       path: https://dashy.to/docs
 appConfig:
-  theme: glass
+  theme: adventure
   defaultOpeningMethod: sametab
   statusCheck: true
   language: en
@@ -28,6 +30,12 @@ sections:
         url: /qbt/
         statusCheck: true
         statusCheckUrl: http://qbittorrent:8080/
+      - title: File Browser
+        description: Web file manager
+        icon: hl-filebrowser
+        url: /filebrowser/
+        statusCheck: true
+        statusCheckUrl: http://caddy/filebrowser/
   - name: Network
     items:
       - title: Pi-hole
