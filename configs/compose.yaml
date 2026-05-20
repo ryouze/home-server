@@ -13,6 +13,16 @@ services:
       - "./caddy/conf:/etc/caddy:ro"
     restart: "unless-stopped"
 
+  dashy:
+    image: "lissy93/dashy:latest"
+    container_name: "dashy"
+    user: "1000:1000"
+    volumes:
+      - "./dashy/user-data:/app/user-data"
+    environment:
+      NODE_ENV: "production"
+    restart: "unless-stopped"
+
   pihole:
     image: "pihole/pihole:latest"
     container_name: "pihole"
@@ -29,60 +39,6 @@ services:
       - "53:53/udp"
     volumes:
       - "./pihole/etc-pihole:/etc/pihole"
-    restart: "unless-stopped"
-
-  dashy:
-    image: "lissy93/dashy:latest"
-    container_name: "dashy"
-    user: "1000:1000"
-    volumes:
-      - "./dashy/user-data:/app/user-data"
-    environment:
-      NODE_ENV: "production"
-    restart: "unless-stopped"
-
-  jellyfin:
-    image: "jellyfin/jellyfin:latest"
-    container_name: "jellyfin"
-    user: "1000:1000"
-    group_add:
-      - "992"
-    devices:
-      - "/dev/dri/renderD128:/dev/dri/renderD128"
-    ports:
-      - "7359:7359/udp"
-    volumes:
-      - "./jellyfin/cache:/cache"
-      - "./storage/data/media:/data/media:ro"
-      - "./jellyfin/config:/config"
-    restart: "unless-stopped"
-
-  qbittorrent:
-    image: "lscr.io/linuxserver/qbittorrent:latest"
-    container_name: "qbittorrent"
-    environment:
-      TZ: "Europe/Warsaw"
-      PGID: "1000"
-      PUID: "1000"
-      WEBUI_PORT: "8080"
-      TORRENTING_PORT: "6881"
-    ports:
-      - "6881:6881"
-      - "6881:6881/udp"
-    volumes:
-      - "./storage/data/torrents:/data/torrents"
-      - "./qbittorrent/config:/config"
-    restart: "unless-stopped"
-
-  filebrowser:
-    image: "filebrowser/filebrowser:latest"
-    container_name: "filebrowser"
-    environment:
-      FB_BASE_URL: "/filebrowser"
-    volumes:
-      - "./storage/data:/srv"
-      - "./filebrowser/database:/database"
-      - "./filebrowser/config:/config"
     restart: "unless-stopped"
 
   sonarr:
@@ -111,6 +67,34 @@ services:
       - "./storage/data:/data"
     restart: "unless-stopped"
 
+  bazarr:
+    image: "lscr.io/linuxserver/bazarr:latest"
+    container_name: "bazarr"
+    environment:
+      TZ: "Europe/Warsaw"
+      PUID: "1000"
+      PGID: "1000"
+    volumes:
+      - "./bazarr/config:/config"
+      - "./storage/data/media:/data/media"
+    restart: "unless-stopped"
+
+  jellyfin:
+    image: "jellyfin/jellyfin:latest"
+    container_name: "jellyfin"
+    user: "1000:1000"
+    group_add:
+      - "992"
+    devices:
+      - "/dev/dri/renderD128:/dev/dri/renderD128"
+    ports:
+      - "7359:7359/udp"
+    volumes:
+      - "./jellyfin/cache:/cache"
+      - "./storage/data/media:/data/media:ro"
+      - "./jellyfin/config:/config"
+    restart: "unless-stopped"
+
   prowlarr:
     image: "lscr.io/linuxserver/prowlarr:latest"
     container_name: "prowlarr"
@@ -123,14 +107,30 @@ services:
       - "./prowlarr/config:/config"
     restart: "unless-stopped"
 
-  bazarr:
-    image: "lscr.io/linuxserver/bazarr:latest"
-    container_name: "bazarr"
+  qbittorrent:
+    image: "lscr.io/linuxserver/qbittorrent:latest"
+    container_name: "qbittorrent"
     environment:
       TZ: "Europe/Warsaw"
-      PUID: "1000"
       PGID: "1000"
+      PUID: "1000"
+      WEBUI_PORT: "8080"
+      TORRENTING_PORT: "6881"
+    ports:
+      - "6881:6881"
+      - "6881:6881/udp"
     volumes:
-      - "./bazarr/config:/config"
-      - "./storage/data/media:/data/media"
+      - "./storage/data/torrents:/data/torrents"
+      - "./qbittorrent/config:/config"
+    restart: "unless-stopped"
+
+  filebrowser:
+    image: "filebrowser/filebrowser:latest"
+    container_name: "filebrowser"
+    environment:
+      FB_BASE_URL: "/filebrowser"
+    volumes:
+      - "./storage/data:/srv"
+      - "./filebrowser/database:/database"
+      - "./filebrowser/config:/config"
     restart: "unless-stopped"

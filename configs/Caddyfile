@@ -12,23 +12,17 @@
 # Listen on HTTP port 80
 :80 {
     # Redirect bare app paths to their canonical trailing-slash or admin paths
-    redir /jellyfin /jellyfin/ 308
     redir /qbt /qbt/ 308
     redir /pihole /pihole/admin/ 308
     redir /pihole/ /pihole/admin/ 308
-    redir /filebrowser /filebrowser/ 308
     redir /sonarr /sonarr/ 308
     redir /radarr /radarr/ 308
-    redir /prowlarr /prowlarr/ 308
     redir /bazarr /bazarr/ 308
+    redir /jellyfin /jellyfin/ 308
+    redir /prowlarr /prowlarr/ 308
+    redir /filebrowser /filebrowser/ 308
 
-    # Proxy Jellyfin requests without stripping `/jellyfin`
-    # This must match Jellyfin's Base URL setting
-    handle /jellyfin/* {
-        reverse_proxy jellyfin:8096
-    }
-
-    # Proxy qBittorrent requests and strip `/qbt` before sending them upstream
+    # Proxy qBittorrent requests and strip `/qbt`
     handle_path /qbt/* {
         reverse_proxy qbittorrent:8080 {
             # Send the backend address as the upstream Host header
@@ -36,14 +30,9 @@
         }
     }
 
-    # Proxy Pi-hole requests and strip `/pihole` before sending them upstream
+    # Proxy Pi-hole requests and strip `/pihole`
     handle_path /pihole/* {
         reverse_proxy pihole:80
-    }
-
-    # Proxy File Browser requests and strip `/filebrowser` before sending them upstream
-    handle_path /filebrowser/* {
-        reverse_proxy filebrowser:80
     }
 
     # Proxy Sonarr requests without stripping `/sonarr`
@@ -58,16 +47,27 @@
         reverse_proxy radarr:7878
     }
 
+    # Proxy Bazarr requests without stripping `/bazarr`
+    # This must match Bazarr's URL Base setting
+    handle /bazarr/* {
+        reverse_proxy bazarr:6767
+    }
+
+    # Proxy Jellyfin requests without stripping `/jellyfin`
+    # This must match Jellyfin's Base URL setting
+    handle /jellyfin/* {
+        reverse_proxy jellyfin:8096
+    }
+
     # Proxy Prowlarr requests without stripping `/prowlarr`
     # This must match Prowlarr's URL Base setting
     handle /prowlarr/* {
         reverse_proxy prowlarr:9696
     }
 
-    # Proxy Bazarr requests without stripping `/bazarr`
-    # This must match Bazarr's URL Base setting
-    handle /bazarr/* {
-        reverse_proxy bazarr:6767
+    # Proxy File Browser requests and strip `/filebrowser`
+    handle_path /filebrowser/* {
+        reverse_proxy filebrowser:80
     }
 
     # Proxy all remaining requests to Dashy
