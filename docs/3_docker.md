@@ -54,12 +54,15 @@ I originally wanted to have one `compose.yaml` file within each directory and th
     |   `-- config
     `-- storage
         `-- data
-            |-- dev
-            |-- games
-            |-- misc
-            |-- movies
-            |-- temp
-            `-- tv
+            |-- media
+            |   |-- movies
+            |   `-- tv
+            |-- other
+            |   |-- dev
+            |   `-- games
+            `-- torrents
+                |-- movies
+                `-- tv
     ```
 2. I set the owner to my user (`void`) instead of `root` again:
     ```sh
@@ -81,17 +84,22 @@ I need to put all of my services in the `compose.yaml` file.
 
 1. I logged in with `admin` and the temporary password listed by `docker compose logs qbittorrent`.
 2. In the top bar, I clicked `Tools` -> `Options` and then opened the `WebUI` tab.
-3. Under the `Authentication` tab, I changed the username to `void` and generated a password with my password manager.
+3. Under the `Authentication` tab, I changed the username to `void` and generated a password with my password manager. I also set the `Session timeout` to `0` seconds (never logout).
 4. Under the `Behavior` tab, I set the action on double-click to `No action`. I prefer the explicit right-click menu for managing torrents.
-5. Under the `Downloads` tab, I set `Torrent content layout` to `Create subfolder` and enabled `Add to top of queue`. This is crucial for Jellyfin detection, as each movie and TV series should be in its own directory. I also enabled `Append .!qB extension to incomplete files` and `Keep unselected torrent files in ".unwanted" folder`. Finally, I set the `Default Save Path` to `/data/temp/complete`, enabled `Keep incomplete torrents in`, and set it to `/data/temp/incomplete`.
-6. Under the `BitTorrent` tab, I set `Maximum active downloads` to `4`, `Maximum active uploads` to `10`, and `Maximum active torrents` to `16`.
+5. Under the `Downloads` tab, I set `Torrent content layout` to `Create subfolder` and enabled `Add to top of queue`. This is crucial for Jellyfin detection, as each movie and TV series should be in its own directory. I also enabled `Delete .torrent files afterwards`, `Append .!qB extension to incomplete files` and `Keep unselected torrent files in ".unwanted" folder`. Finally, I set the `Default Save Path` to `/data/torrents`. I also set the following in the `Saving Management` section:
+    - Default Torrent Management Mode: `Automatic`
+    - When Torrent Category changed: `Relocate torrent`
+    - When Default Save Path changed: `Relocate affected torrents`
+    - When Category Save Path changed: `Relocate affected torrents`.
+6. Under the `Connection` tab, I set `Global maximum number of upload slots` to `8`.
+7. Under the `BitTorrent` tab, I set `Maximum active downloads` to `4`, `Maximum active uploads` to `10`, and `Maximum active torrents` to `16`.
 
 ## Jellyfin setup
 
 1. I opened Safari and went to `debian.local:8096`.
 2. I set the server name to `debian` and the preferred display language to `English`.
 3. I set the default (admin) username to `void` and generated a password using my password manager.
-4. I added my Movies (`data/movies`) and TV series (`data/tv`) libraries. I set the language to `English` and the region to `United States`. I also enabled metadata refresh every 90 days.
+4. I added my Movies (`data/media/movies`) and TV series (`data/media/tv`) libraries. I set the language to `English` and the region to `United States`. I also enabled metadata refresh every 90 days.
 5. I set the preferred metadata language to `English` and the region to `United States`.
 6. I left `Allow remote connections to this server` enabled.
 7. After the main page loaded, I clicked the profile icon in the top-right corner and clicked `Dashboard` (Administration).
@@ -108,6 +116,7 @@ I need to put all of my services in the `compose.yaml` file.
 3. In the Jellyfin `Dashboard` (Administration) (see `## Jellyfin setup`), I opened the `Networking` tab, set the `Base URL` to `/jellyfin`, and clicked `Save` at the bottom.
 4. I ran `docker compose down` and `docker compose up -d` for a clean restart.
 5. In the Jellyfin `Dashboard` (Administration) (see `## Jellyfin setup`), I opened the `Networking` tab and set `Known Proxies` to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` (e.g., `123.12.0.3`). When traffic passes through a reverse proxy, Jellyfin will otherwise see the proxy's IP instead of the client's IP.
+6. In qBittorrent `WebUI` tab, I checked `Enable reverse proxy support` and set it to the output of `docker network inspect srv_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}'` again.
 
 ## Dashy setup
 
@@ -130,7 +139,7 @@ I need to put all of my services in the `compose.yaml` file.
 3. I clicked the `Settings` sidebar, selected the `User Management` tab, clicked the `Edit` button next to the default `admin` account, and then changed its username to `void` and password to the one from my password manager.
 4. Still in the settings, I selected the `Global Settings` tab, set the `Minimum password length` to `20`, and set the `Instance name` to `debian.local`.
 
-## Arr setup
+## Servarr setup
 
 1. I started the containers once so they could generate config files:
     ```sh
@@ -145,8 +154,8 @@ I need to put all of my services in the `compose.yaml` file.
     `nano /srv/bazarr/config/config/config.yaml`: Replace `base_url: ''` with `base_url: '/bazarr'`
 3. I restarted everything via `docker compose down && docker compose up -d`.
 4. I logged into qBittorrent at `http://debian.local/qbt/` and, on the left sidebar, right-clicked inside the `Categories` area and created two categories:
-    - Name: `sonarr`, Save path: (Blank)
-    - Name: `radarr`, Save path: (Blank)
+    - Name: `sonarr`, Save path: `/data/torrents/tv`
+    - Name: `radarr`, Save path: `/data/torrents/movies`
 5. I went to `http://debian.local/sonarr/` and in the `Authentication Required` modal, I selected:
    - Authentication Method: `Forms (Login Page)`
    - Authentication Required: `Enabled`
@@ -159,7 +168,7 @@ I need to put all of my services in the `compose.yaml` file.
    - Username: `void`
    - Password: (Taken from my password manager)
    - Category: `sonarr`
-   - Remove Completed: Unchecked
+   - Remove Completed: Checked
 8. I added `qBittorrent` as a download client in `http://debian.local/radarr/` using the same settings, with the category set to `radarr`.
 9. In both Sonarr and Radarr, I opened `Settings` -> `General` and copied the `API Key`. Then in Prowlarr, under `Settings` -> `Apps`, I clicked the plus symbol and added Sonarr with the following settings:
     - Name: `Sonarr`
@@ -175,14 +184,17 @@ I need to put all of my services in the `compose.yaml` file.
    - Prowlarr Server: `http://prowlarr:9696/prowlarr`
    - Radarr Server: `http://radarr:7878/radarr`
    - API Key: (Radarr API key)
-10. Still in Prowlarr, in the left sidebar, I opened `Indexers` and clicked `Add indexer`. I then added the following: `AnimeTosho` (Tags: `radarr`, `sonarr`), `LimeTorrents` (Tags: `sonarr`, `radarr`), `The Pirate Bay` (Tags: `sonarr`, `radarr`), `showRSS` (Tags: `sonarr`), `TorrentGalaxyClone` (Tags: `sonarr`, `radarr`), and `YTS` (Tags: `radarr`).
-11. In Sonarr, under `Settings` -> `Media Management`, I clicked `Add Root Folder` and entered `/data/tv/`, then checked `Rename Episodes`. I did the same for Radarr, setting it to `/data/movies`.
-12. I went to `http://debian.local/bazarr/` and, on the left sidebar, selected `Settings` and entered the following:
+    Under sync profiles, I clicked `Standard` and set the `Minimum Seeders` to `5`.
+10. Still in Prowlarr, in the left sidebar, I opened `Indexers` and clicked `Add indexer`. I then added the following: `AnimeTosho` (Tags: `radarr`, `sonarr`), `LimeTorrents` (Tags: `sonarr`, `radarr`), `The Pirate Bay` (Tags: `sonarr`, `radarr`), `showRSS` (Tags: `sonarr`), `TorrentGalaxyClone` (Tags: `sonarr`, `radarr`), and `YTS` (Tags: `radarr`). I also set the `Seed Ratio` to `2` for each indexer.
+11. In Sonarr, under `Settings` -> `Media Management`, I clicked `Add Root Folder` and entered `/data/media/tv/`, then checked `Rename Episodes`, `Create Empty Series Folders`, and `Unmonitor Deleted Episodes`. I set `Propers and Repakcs` to `Do not Prefer`. I did the same for Radarr, setting it to `/data/media/movies`. I also added the recomended naming schemas for Sonarr and Radarr from here: https://trash-guides.info/Sonarr/Sonarr-recommended-naming-scheme/. I also chcked `Import extra files` and set them to `srt,ass,ssa,sub,idx,nfo` for both Sonarr and Radarr.
+12. In `Settings`, `Custom Formats`, I clicked the plus button. I then imported `AV1`, `BR-DISK`, `LQ`, `LQ (Release Title)`, `Upscaled`, `Extras` from and followed the rest in https://trash-guides.info/Sonarr/sonarr-setup-quality-profiles/#web-1080p.
+13. I did the same custom format setup for Radarr using the following: https://trash-guides.info/Radarr/radarr-setup-quality-profiles/#hd-bluray-web
+14. I went to `http://debian.local/bazarr/` and, on the left sidebar, selected `Settings` and entered the following:
    - Authentication Method: `Forms`
    - Authentication Required: `Enabled`
    - Username: `void`
    - Password: (Generated by my password manager)
-13. Still in Bazarr, on the left sidebar, I selected `Radarr`, checked `Enabled`, and set the following:
+15. Still in Bazarr, on the left sidebar, I selected `Radarr`, checked `Enabled`, and set the following:
     - Address: `radarr`
     - Port: `7878`
     - Base URL: `radarr`
@@ -193,26 +205,4 @@ I need to put all of my services in the `compose.yaml` file.
     - Port: `8989`
     - Base URL: `sonarr`
     - Download Only Monitored: `disabled`
-14. Still in Bazarr, on the left sidebar, I selected `Subtitles` and set `Languages Filter` to `English`. Under `Languages Profile`, I then clicked `Add New Profile` and set `Name` to `English` and `tag` to `english`. Then, under `Default Language Profiles For Newly Added Shows`, I checked both `Series` and `Movies` and set them to `English`.
-
-```md
-qBittorrent app-side settings:
-
-Go to `Tools -> Options -> WebUI`.
-
-Set the bind IP to `*`. qBittorrent's Caddy guide says to leave the IP set to `*`. This matters because Caddy will connect from another container, not from qBittorrent itself. ([GitHub][5])
-
-Set the WebUI port to `8080`, since that is what your compose file already uses.
-
-Turn off `Use UPnP / NAT-PMP to forward the port from my router`. qBittorrent's guide explicitly says to disable it. ([GitHub][5])
-
-Turn off `Use HTTPS instead of HTTP`. Since Caddy is the reverse proxy in front, qBittorrent's own guide explicitly says to leave qBittorrent on HTTP behind the proxy. ([GitHub][5])
-
-Turn on `Clickjacking protection` and `CSRF protection`. qBittorrent's Caddy guide explicitly says to enable both. ([GitHub][5])
-
-Turn on `Host header validation`. qBittorrent's Caddy guide says to enable it and confirm `*; example.domain` is present in the `server domains` box. The qBittorrent WebUI API describes this field as a semicolon-separated list of domains accepted when performing Host header validation. For your LAN-only setup, the practical version is something like `*; 192.168.1.50; media.lan` if those are the names you use. ([GitHub][5])
-
-Do not enable qBittorrent's built-in HTTPS for this setup. Also do not add a `Secure` cookie rule in Caddy for this HTTP-only LAN setup. qBittorrent's reverse-proxy docs warn that forcing the cookie `Secure` flag while the external site is only HTTP causes login loops. ([GitHub][3])
-
-If qBittorrent gives `Unauthorized` or login-loop behavior, the usual cause is the WebUI security settings not matching the reverse proxy setup, especially host header validation, server domains, or an HTTP/HTTPS mismatch.
-```
+16. Still in Bazarr, on the left sidebar, I selected `Subtitles` and set `Languages Filter` to `English`. Under `Languages Profile`, I then clicked `Add New Profile` and set `Name` to `English` and `tag` to `english`. Then, under `Default Language Profiles For Newly Added Shows`, I checked both `Series` and `Movies` and set them to `English`. Then, on the left sidebar, I selected `Providers` and under `Enabled Proviers`, I clicked the plus icon.

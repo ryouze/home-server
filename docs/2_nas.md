@@ -23,18 +23,21 @@ I need to organize all files by directory, as my old layout was pretty bad.
     /srv
     `-- storage
         `-- data
-            |-- dev
-            |-- games
-            |-- misc
-            |-- movies
-            |-- temp
-            `-- tv
+            |-- media
+            |   |-- movies
+            |   `-- tv
+            |-- other
+            |   |-- dev
+            |   `-- games
+            `-- torrents
+                |-- movies
+                `-- tv
     ```
-2. I set file permissions to only allow access for my user (`void`):
+2. I set up the file permissions:
     ```sh
     sudo chown -R void:void /srv
-    find /srv/storage/data -type d -exec chmod 700 {} +
-    find /srv/storage/data -type f -exec chmod 600 {} +
+    find /srv/storage/data -type d -exec chmod 755 {} +
+    find /srv/storage/data -type f -exec chmod 644 {} +
     ```
 
 ## Disk health

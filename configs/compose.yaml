@@ -53,7 +53,7 @@ services:
       - "7359:7359/udp"
     volumes:
       - "./jellyfin/cache:/cache"
-      - "./storage/data:/data:ro"
+      - "./storage/data/media:/data/media:ro"
       - "./jellyfin/config:/config"
     restart: "unless-stopped"
 
@@ -70,7 +70,7 @@ services:
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - "./storage/data:/data"
+      - "./storage/data/torrents:/data/torrents"
       - "./qbittorrent/config:/config"
     restart: "unless-stopped"
 
@@ -92,6 +92,7 @@ services:
       TZ: "Europe/Warsaw"
       PUID: "1000"
       PGID: "1000"
+      SONARR__SERVER__URLBASE: "/sonarr"
     volumes:
       - "./sonarr/config:/config"
       - "./storage/data:/data"
@@ -104,6 +105,7 @@ services:
       TZ: "Europe/Warsaw"
       PUID: "1000"
       PGID: "1000"
+      RADARR__SERVER__URLBASE: "/radarr"
     volumes:
       - "./radarr/config:/config"
       - "./storage/data:/data"
@@ -116,6 +118,7 @@ services:
       TZ: "Europe/Warsaw"
       PUID: "1000"
       PGID: "1000"
+      PROWLARR__SERVER__URLBASE: "/prowlarr"
     volumes:
       - "./prowlarr/config:/config"
     restart: "unless-stopped"
@@ -129,5 +132,5 @@ services:
       PGID: "1000"
     volumes:
       - "./bazarr/config:/config"
-      - "./storage/data:/data"
+      - "./storage/data/media:/data/media"
     restart: "unless-stopped"
