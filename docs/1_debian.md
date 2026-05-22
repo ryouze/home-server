@@ -110,7 +110,7 @@ I need to set a DHCP reservation for the server.
 I want to be able to access Jellyfin when I am outside my home; this is only a fallback for holidays and similar situations, not my primary way of accessing it.
 
 1. I installed the Tailscale app on iOS and signed in with Apple.
-2. I followed the Linux installation instructions, running `sudo tailscale up --accept-dns=false`: https://tailscale.com/docs/install/linux
+2. I followed the Linux installation instructions, running `sudo tailscale up --accept-dns=false --advertise-tags=tag:debian` (I originally ran it without `--advertise-tags=tag:debian` first because I had to create a tag in `Access controls` tab): https://tailscale.com/docs/install/linux
 3. I also disabled logging: https://tailscale.com/docs/install/linux#disable-logging
 4. In the admin console (https://login.tailscale.com/admin/machines), I opened the `...` menu and clicked `Disable key expiry`. Under the `Access controls` tab, I set the file to `configs/tailscale.hujson`.
 
@@ -121,18 +121,21 @@ There are a couple of small things worth changing.
 1. During setup, I chose the United States as my region, so the time zone needed to be fixed. I ran `sudo timedatectl set-timezone Europe/Warsaw` to set it to Poland.
 2. While I still had a monitor connected, I noticed there was a GRUB screen before the OS started. I ran `sudo nano /etc/default/grub` to open the GRUB config, changed `GRUB_TIMEOUT` from `5` to `0`, then ran `sudo update-grub`.
 3. To set up automatic updates, I ran `sudo apt install unattended-upgrades` and then `sudo dpkg-reconfigure unattended-upgrades`.
-4. To set up a firewall with an SSH whitelist, I ran:
+4. To set up a firewall with an SSH whitelist, I ran `sudo apt install ufw` and then:
     ```sh
-    sudo apt install ufw
     sudo ufw default deny incoming
     sudo ufw default allow outgoing
-    sudo ufw allow OpenSSH
+    sudo ufw allow from 192.168.1.0/24 to any app OpenSSH comment "Allow SSH from IPv4 LAN only"
+    sudo ufw allow from fd56:f5b6:5d2b:4d79::/64 to any app OpenSSH comment "Allow SSH from IPv6 LAN only"
+    sudo ufw allow 5353/udp comment "Allow mDNS for local hostname discovery"
+    sudo ufw allow from 192.168.1.0/24 to any app Samba comment "Allow Samba from IPv4 LAN only"
+    sudo ufw allow from fd56:f5b6:5d2b:4d79::/64 to any app Samba comment "Allow Samba from IPv6 LAN only"
     sudo ufw enable
+    sudo ufw status verbose
     ```
 5. To set up Avahi so I can access the server at `debian.local` (e.g., `ssh void@debian.local`), I ran:
     ```sh
     sudo apt install avahi-daemon
-    sudo ufw allow 5353/udp
     ```
 6. To avoid having to enter my `sudo` password every 5 minutes, I ran `sudo visudo -f /etc/sudoers.d/void` and entered the following:
     ```

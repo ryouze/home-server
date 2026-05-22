@@ -1,10 +1,15 @@
 {
+	// Only the tailnet owner may tag devices as Debian
+	"tagOwners": {
+		"tag:debian": ["autogroup:owner"],
+	},
+
 	// Only allow access defined below (deny everything else by default)
 	"grants": [
-		// The tailnet owner may access their own devices on TCP port 80.
+		// The tailnet owner and invited shared users may access the Debian machine on TCP port 80
 		{
-			"src": ["autogroup:owner"],
-			"dst": ["autogroup:self"],
+			"src": ["autogroup:owner", "autogroup:shared"],
+			"dst": ["tag:debian"],
 			"ip":  ["tcp:80"],
 		},
 	],
