@@ -3,9 +3,6 @@
 pageInfo:
   title: Home Server
   description: debian.local
-  navLinks:
-    - title: Documentation
-      path: https://dashy.to/docs
 appConfig:
   theme: adventure
   defaultOpeningMethod: sametab
@@ -16,6 +13,8 @@ appConfig:
     disableWebSearch: true
   hideComponents:
     hideSearch: true
+  layout: horizontal
+  enableErrorReporting: true
 sections:
   - name: Media
     items:
@@ -71,3 +70,12 @@ sections:
         url: /pihole/admin/
         statusCheck: true
         statusCheckUrl: http://pihole:80/admin/login
+  - name: Management
+    items:
+      - title: Cup
+        description: Show available Docker image updates
+        icon: sh-docker
+        url: /cup/
+        statusCheck: true
+        statusCheckUrl: http://cup:8000/api/v3/json
+pages: []

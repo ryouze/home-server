@@ -12,6 +12,7 @@
 # Listen on HTTP port 80
 :80 {
     # Redirect bare app paths to their canonical trailing-slash or admin paths
+    redir /cup /cup/ 308
     redir /qbt /qbt/ 308
     redir /pihole /pihole/admin/ 308
     redir /pihole/ /pihole/admin/ 308
@@ -21,6 +22,11 @@
     redir /jellyfin /jellyfin/ 308
     redir /prowlarr /prowlarr/ 308
     redir /filebrowser /filebrowser/ 308
+
+    # Proxy Cup requests and strip `/cup`
+    handle_path /cup/* {
+        reverse_proxy cup:8000
+    }
 
     # Proxy qBittorrent requests and strip `/qbt`
     handle_path /qbt/* {

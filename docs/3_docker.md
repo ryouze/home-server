@@ -206,3 +206,8 @@ I need to put all of my services in the `compose.yaml` file.
     - Base URL: `sonarr`
     - Download Only Monitored: `disabled`
 16. Still in Bazarr, on the left sidebar, I selected `Subtitles` and set `Languages Filter` to `English`. Under `Languages Profile`, I then clicked `Add New Profile` and set `Name` to `English` and `tag` to `english`. Then, under `Default Language Profiles For Newly Added Shows`, I checked both `Series` and `Movies` and set them to `English`. Then, on the left sidebar, I selected `Providers` and under `Enabled Proviers`, I clicked the plus icon.
+
+## Cup setup
+
+1. I ran `getent group docker | cut -d: -f3` to to find the group ID for the Docker group (it was `987`) and added it as target here: `user: "1000:987"` to `/srv/compose.yaml`.
+2. I restarted everything via `docker compose down && docker compose up -d`.

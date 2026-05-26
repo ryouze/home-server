@@ -30,6 +30,7 @@ Headless Debian (accessed via SSH), running:
 - Samba (file sharing)
 - File Browser (file manager)
 - Pi-hole (DNS filtering)
+- Cup (container update checker)
 - Tailscale (remote access VPN)
 
 ## Contributing

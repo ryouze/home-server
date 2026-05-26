@@ -134,3 +134,14 @@ services:
       - "./filebrowser/database:/database"
       - "./filebrowser/config:/config"
     restart: "unless-stopped"
+
+  cup:
+    image: "ghcr.io/sergi0g/cup:latest"
+    container_name: "cup"
+    user: "1000:987"
+    environment:
+      TZ: "Europe/Warsaw"
+    command: "serve"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: "unless-stopped"
