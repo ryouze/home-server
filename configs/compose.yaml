@@ -17,10 +17,10 @@ services:
     image: "lissy93/dashy:latest"
     container_name: "dashy"
     user: "1000:1000"
-    volumes:
-      - "./dashy/user-data:/app/user-data"
     environment:
       NODE_ENV: "production"
+    volumes:
+      - "./dashy/user-data:/app/user-data"
     restart: "unless-stopped"
 
   pihole:
@@ -50,8 +50,8 @@ services:
       PGID: "1000"
       SONARR__SERVER__URLBASE: "/sonarr"
     volumes:
-      - "./sonarr/config:/config"
       - "./storage/data:/data"
+      - "./sonarr/config:/config"
     restart: "unless-stopped"
 
   radarr:
@@ -63,8 +63,8 @@ services:
       PGID: "1000"
       RADARR__SERVER__URLBASE: "/radarr"
     volumes:
-      - "./radarr/config:/config"
       - "./storage/data:/data"
+      - "./radarr/config:/config"
     restart: "unless-stopped"
 
   bazarr:
@@ -91,8 +91,8 @@ services:
       - "7359:7359/udp"
     volumes:
       - "./jellyfin/cache:/cache"
-      - "./storage/data/media:/data/media:ro"
       - "./jellyfin/config:/config"
+      - "./storage/data/media:/data/media:ro"
     restart: "unless-stopped"
 
   prowlarr:
@@ -115,13 +115,14 @@ services:
       PGID: "1000"
       PUID: "1000"
       WEBUI_PORT: "8080"
+      DOCKER_MODS: "ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest"
       TORRENTING_PORT: "6881"
     ports:
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - "./storage/data/torrents:/data/torrents"
       - "./qbittorrent/config:/config"
+      - "./storage/data/torrents:/data/torrents"
     restart: "unless-stopped"
 
   filebrowser:
@@ -131,8 +132,8 @@ services:
       FB_BASE_URL: "/filebrowser"
     volumes:
       - "./storage/data:/srv"
-      - "./filebrowser/database:/database"
       - "./filebrowser/config:/config"
+      - "./filebrowser/database:/database"
     restart: "unless-stopped"
 
   cup:
