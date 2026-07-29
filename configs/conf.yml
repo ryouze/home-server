@@ -1,8 +1,5 @@
 # /srv/dashy/user-data/conf.yml
 
-pageInfo:
-  title: Home Server
-  description: debian.local
 appConfig:
   theme: adventure
   defaultOpeningMethod: sametab
@@ -13,59 +10,72 @@ appConfig:
     disableWebSearch: true
   hideComponents:
     hideSearch: true
-  layout: horizontal
+  layout: masonry
   enableErrorReporting: true
+  iconSize: large
+  disableUpdateChecks: true
+pageInfo:
+  title: Home Server
+  description: void@debian.local
 sections:
   - name: Media
     items:
       - title: Jellyfin
-        description: Stream movies, shows, music, and other media from the server
+        description: Stream movies, TV shows, and other media
         icon: sh-jellyfin
         url: /jellyfin/
         statusCheckUrl: http://jellyfin:8096/jellyfin/
       - title: File Browser
-        description: Browse, upload, download, and manage server files through the web
+        description: Browse, download, and upload files
         icon: sh-file-browser
         url: /filebrowser/
         statusCheckUrl: http://caddy/filebrowser/
+    icon: sh-mediamanager
   - name: Servarr
     items:
       - title: Sonarr
-        description: Monitor TV series and manage episode downloads
+        description: Download and manage TV series
         icon: sh-sonarr
         url: /sonarr/
         statusCheckUrl: http://sonarr:8989/
       - title: Radarr
-        description: Monitor movies and manage film downloads
+        description: Download and manage movies
         icon: sh-radarr
         url: /radarr/
         statusCheckUrl: http://radarr:7878/
       - title: Prowlarr
-        description: Manage indexers used by Sonarr, Radarr, and other download tools
+        description: Manage indexers used by Sonarr and Radarr
         icon: sh-prowlarr
         url: /prowlarr/
         statusCheckUrl: http://prowlarr:9696/
       - title: Bazarr
-        description: Find and manage subtitles for movies and TV shows
+        description: Download subtitles for movies and TV series
         icon: sh-bazarr
         url: /bazarr/
         statusCheckUrl: http://bazarr:6767/
       - title: qBittorrent
-        description: Add, monitor, and control torrent downloads
+        description: Download and manage torrents
         icon: sh-qbittorrent
         url: /qbt/
         statusCheckUrl: http://qbittorrent:8080/
+    icon: sh-servarr
   - name: Network
     items:
       - title: Pi-hole
-        description: Block ads and trackers with local DNS filtering
+        description: Block ads and trackers
         icon: sh-pi-hole
         url: /pihole/admin/
         statusCheckUrl: http://pihole:80/admin/login
       - title: Tailscale
-        description: Manage remote devices connected to this server
+        description: Connect remotely to this server
         icon: sh-tailscale
         url: https://login.tailscale.com/admin/machines
+    icon: sh-networking-toolbox
+    widgets:
+      - type: pi-hole-traffic-v6
+        options:
+          hostname: /pihole
+          apiKey: DASHY_PIHOLE_PASSWORD
   - name: Management
     items:
       - title: Cup
@@ -73,4 +83,5 @@ sections:
         icon: sh-cup-updates
         url: /cup/
         statusCheckUrl: http://cup:8000/api/v3/json
+    icon: sh-docker
 pages: []

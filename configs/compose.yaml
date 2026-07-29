@@ -1,7 +1,6 @@
 # /srv/compose.yaml
 
 services:
-
   caddy:
     image: "caddy:2-alpine"
     container_name: "caddy"
@@ -19,6 +18,7 @@ services:
     user: "1000:1000"
     environment:
       NODE_ENV: "production"
+      DASHY_PIHOLE_PASSWORD: "${PIHOLE_WEB_PASSWORD}"
     volumes:
       - "./dashy/user-data:/app/user-data"
     restart: "unless-stopped"
