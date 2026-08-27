@@ -9,65 +9,65 @@ I need to set up Docker for all of my home server services.
 1. I followed the official Docker guide for the APT installation method: https://docs.docker.com/engine/install/debian/#install-using-the-repository
 2. After installation, I followed a guide that avoids having to use `sudo`: https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 3. I created a config that rotates log files via `sudo nano /etc/docker/daemon.json`:
-    ```json
-    {
-        "log-driver": "local",
-        "log-opts": {
-            "max-size": "10m"
-        }
-    }
-    ```
+   ```json
+   {
+     "log-driver": "local",
+     "log-opts": {
+       "max-size": "10m"
+     }
+   }
+   ```
 
 ## File layout
 
 I originally wanted to have one `compose.yaml` file within each directory and then one global `compose.yaml` that imports them. However, I later realized that this much indirection was not worth it for a simple home server.
 
 1. I created the following layout using `sudo` (`/srv/storage` was set up in the previous "NAS" step):
-    ```sh
-    .
-    |-- .env
-    |-- compose.yaml
-    |-- caddy
-    |   |-- conf
-    |   |   `-- Caddyfile
-    |   |-- config
-    |   `-- data
-    |-- dashy
-    |   `-- user-data
-    |-- filebrowser
-    |   |-- config
-    |   `-- database
-    |-- pihole
-    |   `-- etc-pihole
-    |-- jellyfin
-    |   |-- cache
-    |   `-- config
-    |-- qbittorrent
-    |   `-- config
-    |-- prowlarr
-    |   `-- config
-    |-- radarr
-    |   `-- config
-    |-- sonarr
-    |   `-- config
-    |-- bazarr
-    |   `-- config
-    `-- storage
-        `-- data
-            |-- media
-            |   |-- movies
-            |   `-- tv
-            |-- other
-            |   |-- dev
-            |   `-- games
-            `-- torrents
-                |-- movies
-                `-- tv
-    ```
+   ```sh
+   .
+   |-- .env
+   |-- compose.yaml
+   |-- caddy
+   |   |-- conf
+   |   |   `-- Caddyfile
+   |   |-- config
+   |   `-- data
+   |-- dashy
+   |   `-- user-data
+   |-- filebrowser
+   |   |-- config
+   |   `-- database
+   |-- pihole
+   |   `-- etc-pihole
+   |-- jellyfin
+   |   |-- cache
+   |   `-- config
+   |-- qbittorrent
+   |   `-- config
+   |-- prowlarr
+   |   `-- config
+   |-- radarr
+   |   `-- config
+   |-- sonarr
+   |   `-- config
+   |-- bazarr
+   |   `-- config
+   `-- storage
+       `-- data
+           |-- media
+           |   |-- movies
+           |   `-- tv
+           |-- other
+           |   |-- dev
+           |   `-- games
+           `-- torrents
+               |-- movies
+               `-- tv
+   ```
 2. I set the owner to my user (`void`) instead of `root` again:
-    ```sh
-    sudo chown -R void:void /srv
-    ```
+   ```sh
+   sudo chown -R void:void /srv
+   ```
 
 ## Docker Compose setup
 
@@ -87,10 +87,10 @@ I need to put all of my services in the `compose.yaml` file.
 3. Under the `Authentication` tab, I changed the username to `void` and generated a password with my password manager. I also set the `Session timeout` to `0` seconds (never log out).
 4. Under the `Behavior` tab, I set the action on double-click to `No action`. I prefer the explicit right-click menu for managing torrents.
 5. Under the `Downloads` tab, I set `Torrent content layout` to `Create subfolder` and enabled `Add to top of queue`. This is crucial for Jellyfin detection, as each movie and TV series should be in its own directory. I also enabled `Delete .torrent files afterwards`, `Append .!qB extension to incomplete files`, and `Keep unselected torrent files in ".unwanted" folder`. Finally, I set the `Default Save Path` to `/data/torrents`. I also set the following in the `Saving Management` section:
-    - Default Torrent Management Mode: `Automatic`
-    - When Torrent Category changed: `Relocate torrent`
-    - When Default Save Path changed: `Relocate affected torrents`
-    - When Category Save Path changed: `Relocate affected torrents`
+   - Default Torrent Management Mode: `Automatic`
+   - When Torrent Category changed: `Relocate torrent`
+   - When Default Save Path changed: `Relocate affected torrents`
+   - When Category Save Path changed: `Relocate affected torrents`
 6. Under the `Connection` tab, I set `Global maximum number of upload slots` to `8`.
 7. Under the `BitTorrent` tab, I set `Maximum active downloads` to `4`, `Maximum active uploads` to `10`, and `Maximum active torrents` to `16`.
 8. I later added the VueTorrent Docker mod to `compose.yaml` and ran `docker compose up -d --force-recreate qbittorrent`. Then, in the `WebUI` tab, I enabled `Use alternative WebUI` and set the `Files location` to `/vuetorrent`.
@@ -143,49 +143,49 @@ I need to put all of my services in the `compose.yaml` file.
 ## Servarr setup
 
 1. I started the containers once so they could generate config files:
-    ```sh
-    docker compose up -d sonarr radarr prowlarr bazarr
-    # Wait a bit, then:
-    docker compose stop sonarr radarr prowlarr bazarr
-    ```
+   ```sh
+   docker compose up -d sonarr radarr prowlarr bazarr
+   # Wait a bit, then:
+   docker compose stop sonarr radarr prowlarr bazarr
+   ```
 2. I edited the generated config files:
-    `nano /srv/sonarr/config/config.xml`: Replace `<UrlBase></UrlBase>` with `<UrlBase>/sonarr</UrlBase>`
-    `nano /srv/radarr/config/config.xml`: Replace `<UrlBase></UrlBase>` with `<UrlBase>/radarr</UrlBase>`
-    `nano /srv/prowlarr/config/config.xml`: Replace `<UrlBase></UrlBase>` with `<UrlBase>/prowlarr</UrlBase>`
-    `nano /srv/bazarr/config/config/config.yaml`: Replace `base_url: ''` with `base_url: '/bazarr'`
+   `nano /srv/sonarr/config/config.xml`: Replace `<UrlBase></UrlBase>` with `<UrlBase>/sonarr</UrlBase>`
+   `nano /srv/radarr/config/config.xml`: Replace `<UrlBase></UrlBase>` with `<UrlBase>/radarr</UrlBase>`
+   `nano /srv/prowlarr/config/config.xml`: Replace `<UrlBase></UrlBase>` with `<UrlBase>/prowlarr</UrlBase>`
+   `nano /srv/bazarr/config/config/config.yaml`: Replace `base_url: ''` with `base_url: '/bazarr'`
 3. I restarted everything via `docker compose down && docker compose up -d`.
 4. I logged into qBittorrent at `http://debian.local/qbt/` and, on the left sidebar, right-clicked inside the `Categories` area and created two categories:
-    - Name: `sonarr`, Save path: `/data/torrents/tv`
-    - Name: `radarr`, Save path: `/data/torrents/movies`
+   - Name: `sonarr`, Save path: `/data/torrents/tv`
+   - Name: `radarr`, Save path: `/data/torrents/movies`
 5. I went to `http://debian.local/sonarr/` and in the `Authentication Required` modal, I selected:
-    - Authentication Method: `Forms (Login Page)`
-    - Authentication Required: `Enabled`
-    - Username: `void`
-    - Password: (Generated by my password manager)
+   - Authentication Method: `Forms (Login Page)`
+   - Authentication Required: `Enabled`
+   - Username: `void`
+   - Password: (Generated by my password manager)
 6. I also set up authentication for `http://debian.local/radarr/` and `http://debian.local/prowlarr/`.
 7. I went back to `http://debian.local/sonarr/`, opened `Settings` -> `Download Clients` from the left sidebar, clicked the plus button, and added `qBittorrent` with the following settings:
-    - Host: `qbittorrent`
-    - Port: `8080`
-    - Username: `void`
-    - Password: (Taken from my password manager)
-    - Category: `sonarr`
-    - Remove Completed: Checked
+   - Host: `qbittorrent`
+   - Port: `8080`
+   - Username: `void`
+   - Password: (Taken from my password manager)
+   - Category: `sonarr`
+   - Remove Completed: Checked
 8. I added `qBittorrent` as a download client in `http://debian.local/radarr/` using the same settings, with the category set to `radarr`.
 9. In both Sonarr and Radarr, I opened `Settings` -> `General` and copied the `API Key`. Then, in Prowlarr, under `Settings` -> `Apps`, I clicked the plus symbol and added Sonarr with the following settings:
-    - Name: `Sonarr`
-    - Sync Level: `Full Sync`
-    - Tags: `sonarr`
-    - Prowlarr Server: `http://prowlarr:9696/prowlarr`
-    - Sonarr Server: `http://sonarr:8989/sonarr`
-    - API Key: (Sonarr API key)
-    I also added Radarr with the following settings:
-    - Name: `Radarr`
-    - Sync Level: `Full Sync`
-    - Tags: `radarr`
-    - Prowlarr Server: `http://prowlarr:9696/prowlarr`
-    - Radarr Server: `http://radarr:7878/radarr`
-    - API Key: (Radarr API key)
-    Under sync profiles, I clicked `Standard` and set the `Minimum Seeders` to `5`.
+   - Name: `Sonarr`
+   - Sync Level: `Full Sync`
+   - Tags: `sonarr`
+   - Prowlarr Server: `http://prowlarr:9696/prowlarr`
+   - Sonarr Server: `http://sonarr:8989/sonarr`
+   - API Key: (Sonarr API key)
+     I also added Radarr with the following settings:
+   - Name: `Radarr`
+   - Sync Level: `Full Sync`
+   - Tags: `radarr`
+   - Prowlarr Server: `http://prowlarr:9696/prowlarr`
+   - Radarr Server: `http://radarr:7878/radarr`
+   - API Key: (Radarr API key)
+     Under sync profiles, I clicked `Standard` and set the `Minimum Seeders` to `5`.
 10. Still in Prowlarr, in the left sidebar, I opened `Indexers` and clicked `Add indexer`. I then added the following: `AnimeTosho` (Tags: `radarr`, `sonarr`), `LimeTorrents` (Tags: `sonarr`, `radarr`), `The Pirate Bay` (Tags: `sonarr`, `radarr`), `showRSS` (Tags: `sonarr`), `TorrentGalaxyClone` (Tags: `sonarr`, `radarr`), and `YTS` (Tags: `radarr`). I also set the `Seed Ratio` to `2` for each indexer.
 11. In Sonarr, under `Settings` -> `Media Management`, I clicked `Add Root Folder` and entered `/data/media/tv/`, then checked `Rename Episodes`, `Create Empty Series Folders`, and `Unmonitor Deleted Episodes`. I set `Propers and Repacks` to `Do not Prefer`. I did the same for Radarr, setting it to `/data/media/movies`. I also added the recommended naming schemes for Sonarr and Radarr from here: https://trash-guides.info/Sonarr/Sonarr-recommended-naming-scheme/. I also checked `Import extra files` and set them to `srt,ass,ssa,sub,idx,nfo` for both Sonarr and Radarr.
 12. In `Settings` -> `Custom Formats`, I clicked the plus button. I then imported `AV1`, `BR-DISK`, `LQ`, `LQ (Release Title)`, `Upscaled`, and `Extras`, and followed the rest of the guide at https://trash-guides.info/Sonarr/sonarr-setup-quality-profiles/#web-1080p.
@@ -201,7 +201,7 @@ I need to put all of my services in the `compose.yaml` file.
     - Base URL: `radarr`
     - API Key: (Radarr API key)
     - Download Only Monitored: `disabled`
-    For Sonarr, I used the following:
+      For Sonarr, I used the following:
     - Address: `sonarr`
     - Port: `8989`
     - Base URL: `sonarr`

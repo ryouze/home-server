@@ -19,26 +19,26 @@ I need to mount the HDD first and do so automatically at boot.
 I need to organize all files by directory, as my old layout was pretty bad.
 
 1. I created the following flat layout (`/srv/storage` is the raw HDD, `/srv/storage/data` is the actual "working directory"):
-    ```sh
-    /srv
-    `-- storage
-        `-- data
-            |-- media
-            |   |-- movies
-            |   `-- tv
-            |-- other
-            |   |-- dev
-            |   `-- games
-            `-- torrents
-                |-- movies
-                `-- tv
-    ```
+   ```sh
+   /srv
+   `-- storage
+       `-- data
+           |-- media
+           |   |-- movies
+           |   `-- tv
+           |-- other
+           |   |-- dev
+           |   `-- games
+           `-- torrents
+               |-- movies
+               `-- tv
+   ```
 2. I set up the file permissions:
-    ```sh
-    sudo chown -R void:void /srv
-    find /srv/storage/data -type d -exec chmod 755 {} +
-    find /srv/storage/data -type f -exec chmod 644 {} +
-    ```
+   ```sh
+   sudo chown -R void:void /srv
+   find /srv/storage/data -type d -exec chmod 755 {} +
+   find /srv/storage/data -type f -exec chmod 644 {} +
+   ```
 
 ## Disk health
 
@@ -46,10 +46,10 @@ I need some way to tell when my disks are about to fail.
 
 1. I installed Smartmontools with `sudo apt install smartmontools` and enabled it with `sudo systemctl enable --now smartmontools`.
 2. I ran the following to view the logs:
-    ```sh
-    sudo systemctl status smartmontools
-    sudo journalctl -u smartmontools -n 50 --no-pager
-    ```
+   ```sh
+   sudo systemctl status smartmontools
+   sudo journalctl -u smartmontools -n 50 --no-pager
+   ```
 
 ## Samba
 
