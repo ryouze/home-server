@@ -9,6 +9,7 @@ I am upgrading my home server, and I thought it was a good opportunity to do it 
 ## Hardware
 
 Lenovo ThinkCentre M920q Tiny:
+
 - Intel i5-9500T
 - 16 GB RAM
 - 256 GB internal NVMe SSD
@@ -19,6 +20,7 @@ I plan to add an internal SATA SSD in the future.
 ## Software
 
 Headless Debian (accessed via SSH), running:
+
 - Caddy (reverse proxy)
 - Dashy (dashboard)
 - Jellyfin (media server)
@@ -32,11 +34,3 @@ Headless Debian (accessed via SSH), running:
 - Pi-hole (DNS filtering)
 - Cup (container update checker)
 - Tailscale (remote access VPN)
-
-## Contributing
-
-All contributions are welcome.
-
-## License
-
-This project is licensed under the MIT License.
