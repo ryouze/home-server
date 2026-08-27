@@ -144,3 +144,16 @@ There are a couple of small things worth changing.
    ```
    Then I ran `sudo chmod 0440 /etc/sudoers.d/void` and `sudo visudo -c`.
 7. My NVMe was spamming correctable PCIe errors, so I disabled PCIe ASPM (power saving) by changing `GRUB_CMDLINE_LINUX_DEFAULT="quiet"` to `GRUB_CMDLINE_LINUX_DEFAULT="quiet pcie_aspm=off"` in `/etc/default/grub`. I then ran `sudo update-grub` and `sudo reboot`.
+8. I use Zsh on macOS, but configuring it is a bit of a hassle, so I decided to install `fish` instead:
+   ```sh
+   sudo apt install fish
+   chsh -s "$(command -v fish)"
+   ```
+   Then I disconnected and SSH'd into the server again to disable the fish greeting:
+   ```sh
+   set -U fish_greeting
+   ```
+9. I ran the following command to disable Debian's login/MOTD text and the `Last login: ...` line:
+   ```sh
+   touch ~/.hushlogin
+   ```
