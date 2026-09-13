@@ -30,6 +30,11 @@ sections:
         icon: sh-file-browser
         url: /filebrowser/
         statusCheckUrl: http://caddy/filebrowser/
+      - title: yt
+        description: Manage YouTube subscriptions
+        icon: sh-youtube
+        url: /yt/
+        statusCheckUrl: http://yt:8501/yt/_stcore/health
     icon: sh-mediamanager
   - name: Servarr
     items:
