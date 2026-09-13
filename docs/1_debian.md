@@ -157,3 +157,7 @@ There are a couple of small things worth changing.
    ```sh
    touch ~/.hushlogin
    ```
+10. I added myself to `systemd-journal` so that I can use `journalctl` without `sudo` :
+   ```sh
+   sudo usermod -aG systemd-journal void
+   ```
