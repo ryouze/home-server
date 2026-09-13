@@ -1,6 +1,7 @@
 # /srv/compose.yaml
 
 services:
+
   caddy:
     image: "caddy:2-alpine"
     container_name: "caddy"
@@ -145,4 +146,17 @@ services:
     command: "serve"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: "unless-stopped"
+
+  yt:
+    build:
+      context: "https://github.com/ryouze/yt.git"
+    container_name: "yt"
+    user: "1000:1000"
+    environment:
+      STREAMLIT_SERVER_BASE_URL_PATH: /yt
+    ports:
+      - "8501:8501"
+    volumes:
+      - "/srv/yt/data:/app/data"
     restart: "unless-stopped"

@@ -22,6 +22,7 @@
     redir /jellyfin /jellyfin/ 308
     redir /prowlarr /prowlarr/ 308
     redir /filebrowser /filebrowser/ 308
+    redir /yt /yt/
 
     # Proxy Cup requests and strip `/cup`
     handle_path /cup/* {
@@ -74,6 +75,12 @@
     # Proxy File Browser requests and strip `/filebrowser`
     handle_path /filebrowser/* {
         reverse_proxy filebrowser:80
+    }
+
+    # Proxy yt requests without stripping `/yt`
+    # This must match Streamlit's base URL path
+    handle /yt/* {
+        reverse_proxy yt:8501
     }
 
     # Proxy all remaining requests to Dashy
