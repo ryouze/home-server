@@ -157,7 +157,8 @@ There are a couple of small things worth changing.
    ```sh
    touch ~/.hushlogin
    ```
-10. I added myself to `systemd-journal` so that I can use `journalctl` without `sudo` :
+10. SSH was passing macOS locale variables to Debian, including `LC_CTYPE=UTF-8`, which Debian does not recognize as a valid locale and caused warnings during package upgrades. I ran `sudo nano /etc/ssh/sshd_config` and changed `AcceptEnv LANG LC_* COLORTERM NO_COLOR` to `AcceptEnv LANG COLORTERM NO_COLOR` so the server would stop accepting `LC_*` variables from SSH clients. I then ran `sudo sshd -t` to validate the SSH configuration and `sudo systemctl reload ssh` to apply it. Finally, I disconnected and reconnected via SSH and ran `locale` to confirm that the warnings were gone.
+11. I added myself to `systemd-journal` so that I can use `journalctl` without `sudo` :
    ```sh
    sudo usermod -aG systemd-journal void
    ```
