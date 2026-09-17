@@ -155,8 +155,6 @@ services:
     user: "1000:1000"
     environment:
       STREAMLIT_SERVER_BASE_URL_PATH: /yt
-    ports:
-      - "8501:8501"
     volumes:
       - "/srv/yt/data:/app/data"
     restart: "unless-stopped"
