@@ -13,9 +13,50 @@ I need to set up Docker for all of my home server services.
    {
      "log-driver": "local",
      "log-opts": {
-       "max-size": "10m"
+       "max-size": "10m",
+       "max-file": "5"
      }
    }
+   ```
+
+## Automatic cleanup
+
+By default, Docker does not clean up after itself. I want to automatically remove stopped containers, unused networks, unused images, and unused build cache that are at least 7 days old.
+
+1. I created `/etc/systemd/system/docker-maintenance.service` via `sudo nano`:
+   ```ini
+   [Unit]
+   Description=Docker maintenance cleanup
+   Requires=docker.service
+   After=docker.service
+
+   [Service]
+   Type=oneshot
+   ExecStart=/usr/bin/docker system prune --all --force --filter until=168h
+   ```
+2. Then I created `/etc/systemd/system/docker-maintenance.timer`:
+   ```ini
+   [Unit]
+   Description=Run Docker maintenance weekly
+
+   [Timer]
+   OnCalendar=weekly
+   Persistent=true
+   RandomizedDelaySec=30m
+
+   [Install]
+   WantedBy=timers.target
+   ```
+3. I enabled it:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable --now docker-maintenance.timer
+   systemctl list-timers docker-maintenance.timer
+   ```
+4. I manually tested the cleanup once:
+   ```sh
+   sudo systemctl start docker-maintenance.service
+   journalctl -u docker-maintenance.service
    ```
 
 ## File layout
