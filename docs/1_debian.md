@@ -120,7 +120,26 @@ There are a couple of small things worth changing.
 
 1. During setup, I chose the United States as my region, so the time zone needed to be fixed. I ran `sudo timedatectl set-timezone Europe/Warsaw` to set it to Poland.
 2. While I still had a monitor connected, I noticed there was a GRUB screen before the OS started. I ran `sudo nano /etc/default/grub` to open the GRUB config, changed `GRUB_TIMEOUT` from `5` to `0`, then ran `sudo update-grub`.
-3. To set up automatic updates, I ran `sudo apt install unattended-upgrades` and then `sudo dpkg-reconfigure unattended-upgrades`.
+3. To set up automatic updates, I ran `sudo apt install unattended-upgrades` and then `sudo dpkg-reconfigure unattended-upgrades`. I then ran `sudo nano /etc/apt/apt.conf.d/52unattended-upgrades-local` and pasted the following to greedily auto-update all packages:
+   ```
+   #clear Unattended-Upgrade::Origins-Pattern;
+
+   Unattended-Upgrade::Origins-Pattern {
+       "origin=*";
+   };
+
+   APT::Periodic::Update-Package-Lists "1";
+   APT::Periodic::Unattended-Upgrade "1";
+   APT::Periodic::AutocleanInterval "7";
+
+   Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+   Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
+   Unattended-Upgrade::Remove-Unused-Dependencies "true";
+
+   Unattended-Upgrade::Automatic-Reboot "true";
+   Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
+   Unattended-Upgrade::Automatic-Reboot-Time "04:00";
+   ```
 4. To set up a firewall with an SSH whitelist, I ran `sudo apt install ufw` and then:
    ```sh
    sudo ufw default deny incoming
