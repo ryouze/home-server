@@ -32,4 +32,5 @@ Headless Debian, accessed via SSH, running:
 - Samba (file sharing)
 - File Browser (file manager)
 - Pi-hole (DNS filtering)
+- Ollama (local AI)
 - Tailscale (remote access)
