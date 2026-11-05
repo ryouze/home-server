@@ -23,6 +23,7 @@
     redir /prowlarr /prowlarr/ 308
     redir /filebrowser /filebrowser/ 308
     redir /yt /yt/
+    redir /ollama /ollama/ 308
 
     # Proxy Cup requests and strip `/cup`
     handle_path /cup/* {
@@ -81,6 +82,11 @@
     # This must match Streamlit's base URL path
     handle /yt/* {
         reverse_proxy yt:8501
+    }
+
+    # Proxy Ollama requests and strip `/ollama`
+    handle_path /ollama/* {
+        reverse_proxy ollama:11434
     }
 
     # Proxy all remaining requests to Dashy

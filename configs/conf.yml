@@ -1,5 +1,3 @@
-# /srv/dashy/user-data/conf.yml
-
 appConfig:
   theme: adventure
   defaultOpeningMethod: sametab
@@ -35,6 +33,11 @@ sections:
         icon: sh-youtube
         url: /yt/
         statusCheckUrl: http://yt:8501/yt/_stcore/health
+      - title: Ollama
+        description: Run local AI models
+        icon: sh-ollama
+        url: /ollama/
+        statusCheckUrl: http://ollama:11434/
     icon: sh-mediamanager
   - name: Servarr
     items:

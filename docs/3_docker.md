@@ -78,6 +78,8 @@ I originally wanted to have one `compose.yaml` file within each directory and th
    |-- filebrowser
    |   |-- config
    |   `-- database
+   ├── ollama
+   |   `-- data
    |-- pihole
    |   `-- etc-pihole
    |-- jellyfin
@@ -253,3 +255,29 @@ I need to put all of my services in the `compose.yaml` file.
 
 1. I ran `getent group docker | cut -d: -f3` to find the group ID for the Docker group (it was `987`) and added it as a target: `user: "1000:987"` in `/srv/compose.yaml`.
 2. I restarted everything via `docker compose down && docker compose up -d`.
+
+## Ollama setup
+
+1. I restarted everything via `docker compose down && docker compose up -d`.
+2. I downloaded a fast model (this command can also update it): `docker exec ollama ollama pull LiquidAI/lfm2.5-1.2b-instruct:q4_k_m`
+3. I tested it interactively: `docker exec -it ollama ollama run LiquidAI/lfm2.5-1.2b-instruct:q4_k_m`
+4. I listed the installed models from my MacBook: `curl -s http://debian.local/ollama/api/tags | jq`
+5. I sent a prompt to the model:
+   ```
+   curl http://debian.local/ollama/api/generate \
+     -H "Content-Type: application/json" \
+     -d '{
+       "model": "LiquidAI/lfm2.5-1.2b-instruct:q4_k_m",
+       "prompt": "Explain Docker in 2-3 sentences.",
+       "stream": false
+     }' | jq -r '.response'
+   ```
+   With streaming enabled:
+   ```
+   curl -sN http://debian.local/ollama/api/generate \
+     -H "Content-Type: application/json" \
+     -d '{
+       "model": "LiquidAI/lfm2.5-1.2b-instruct:q4_k_m",
+       "prompt": "Explain Docker in 2-3 sentences."
+     }' | jq --unbuffered -rj '.response // empty'
+   ```

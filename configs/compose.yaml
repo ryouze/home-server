@@ -158,3 +158,13 @@ services:
     volumes:
       - "/srv/yt/data:/app/data"
     restart: "unless-stopped"
+
+  ollama:
+    image: "alpine/ollama:latest"
+    container_name: "ollama"
+    environment:
+      OLLAMA_NO_CLOUD: "1"
+      OLLAMA_NOHISTORY: "1"
+    volumes:
+      - "./ollama/data:/root/.ollama"
+    restart: "unless-stopped"
