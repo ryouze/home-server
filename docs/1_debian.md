@@ -172,12 +172,25 @@ There are a couple of small things worth changing.
    ```sh
    set -U fish_greeting
    ```
-9. I ran the following command to disable Debian's login/MOTD text and the `Last login: ...` line:
+9. I installed `bat`, a replacement for `cat` with syntax highlighting and other improvements:
+   ```sh
+   sudo apt install bat
+   ```
+   Then, I ran `nano ~/.config/fish/config.fish` and added the following within `if status is-interactive`:
+   ```
+   alias cat 'batcat --style=plain --paging=never'
+   ```
+10. I installed `tealdeer`, an implementation of the `tldr` command (`tlrc` isn't available in Debian):
+   ```sh
+   sudo apt install tealdeer
+   ```
+   I then ran `tldr --seed-config` to generate a config in `~/.config/tealdeer/config.toml`. I opened it via `nano` and set `auto_update` to `true`.
+11. I ran the following command to disable Debian's login/MOTD text and the `Last login: ...` line:
    ```sh
    touch ~/.hushlogin
    ```
-10. SSH was passing macOS locale variables to Debian, including `LC_CTYPE=UTF-8`, which Debian does not recognize as a valid locale and caused warnings during package upgrades. I ran `sudo nano /etc/ssh/sshd_config` and changed `AcceptEnv LANG LC_* COLORTERM NO_COLOR` to `AcceptEnv LANG COLORTERM NO_COLOR` so the server would stop accepting `LC_*` variables from SSH clients. I then ran `sudo sshd -t` to validate the SSH configuration and `sudo systemctl reload ssh` to apply it. Finally, I disconnected and reconnected via SSH and ran `locale` to confirm that the warnings were gone.
-11. I added myself to `systemd-journal` so that I can use `journalctl` without `sudo` :
+12. SSH was passing macOS locale variables to Debian, including `LC_CTYPE=UTF-8`, which Debian does not recognize as a valid locale and caused warnings during package upgrades. I ran `sudo nano /etc/ssh/sshd_config` and changed `AcceptEnv LANG LC_* COLORTERM NO_COLOR` to `AcceptEnv LANG COLORTERM NO_COLOR` so the server would stop accepting `LC_*` variables from SSH clients. I then ran `sudo sshd -t` to validate the SSH configuration and `sudo systemctl reload ssh` to apply it. Finally, I disconnected and reconnected via SSH and ran `locale` to confirm that the warnings were gone.
+13. I added myself to `systemd-journal` so that I can use `journalctl` without `sudo` :
    ```sh
    sudo usermod -aG systemd-journal void
    ```
