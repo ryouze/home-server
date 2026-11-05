@@ -85,11 +85,6 @@ sections:
           hostname: /pihole
           apiKey: DASHY_PIHOLE_PASSWORD
   - name: Management
-    items:
-      - title: Cup
-        description: Show available Docker image updates
-        icon: sh-cup-updates
-        url: /cup/
-        statusCheckUrl: http://cup:8000/api/v3/json
+    items: []
     icon: sh-docker
 pages: []
